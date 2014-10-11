@@ -5,13 +5,13 @@
 Variance Dispersion and Fraction of Design Space Plots
 }
 \description{
-This package creates variance dispersion graphs (VDGs) and fraction of design space (FDS) plots for spherical and cuboidal design
+This package creates variance dispersion graphs (VDGs), fraction of design space (FDS) plots for second-order model designs in spherical and cuboidal regions, and also generates central composite and factorial designs.
 }
 \details{\tabular{ll}{
 Package: \tab VdgRsm\cr
 Type: \tab Package\cr
-Version: \tab 1.01\cr
-Date: \tab 2014-02-24\cr
+Version: \tab 1.02\cr
+Date: \tab 2014-10-11\cr
 License: \tab GPL-2
 }}
 \author{

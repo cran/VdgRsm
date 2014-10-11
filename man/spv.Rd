@@ -9,7 +9,7 @@ Create Variance Dispesion Graphs (VDGs) for response surface designs in spherica
 \usage{
 spv(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
     des.names = c("Design 1","Design 2","Design 3"),  
-    scale = TRUE, add.pts = TRUE, big.RAM = FALSE)
+    scale = TRUE, add.pts = TRUE)
 }
 
 \arguments{
@@ -23,24 +23,14 @@ spv(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 }
 \item{add.pts}{
   Generate scaled prediction variances of random design points in the VDG. By default \code{add.pts = TRUE}}.
-\item{big.RAM}{
-  When the number of factors equals to 6 or 7, generated random points will not be generated unless \code{big.RAM = TRUE}. However, to save a memory by default \code{big.RAM = FALSE}.}
 }
 \value{
   \code{spv} is called to generate the Variance Dispersion Graph(s) and a table of the minimum, maximum, and average of scaled prediction variances for each design.
 }
 \examples{
-### Generate 3 CCDs for k = 3 with different alpha's for the axial points
-### library(DoE.wrapper) 
-CCD3.1 <- ccd.design(nfactors=3,  ncenter = 2, alpha = 1.5, randomize = FALSE)
-CCD3.1 <- CCD3.1[c(-9,-10),-1]
-CCD3.2 <- ccd.design(nfactors=3,  ncenter = 2, alpha = 1.0, randomize = FALSE)
-CCD3.2 <- CCD3.2[c(-9,-10),-1]
-CCD3.3 <- ccd.design(nfactors=3,  ncenter = 2, alpha = sqrt(3), randomize = FALSE)
-CCD3.3 <- CCD3.3[c(-9,-10),-1]
-### create VDGs
-spv(CCD3.1,CCD3.2,CCD3.3,
-    des.names = c("CCD, alpha = 1.5","CCD, alpha = 1","CCD, alpha = sqrt(3)"))
+CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)
+CCD2<- gen.CCD(n.vars = 3, n.center = 2, alpha = sqrt(3))
+spv(CCD1, CCD2, des.names = c("CCD 1","CCD 2"))
 }
 \keyword{Spherical Designs}
 

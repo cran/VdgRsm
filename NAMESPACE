@@ -1,8 +1,9 @@
 export(spv,
-	fds.sphere,
-	cpv,
-	fds.cube,
-	hyperarcs.vdg)
-import(DoE.wrapper)
+      fds.sphere,
+      cpv,
+      fds.cube,
+      hyperarcs.vdg,
+      gen.Factr,
+      gen.CCD)
 import(AlgDesign)
 importFrom("permute", shuffle, shuffleSet)

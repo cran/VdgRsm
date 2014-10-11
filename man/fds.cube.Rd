@@ -23,17 +23,9 @@ fds.cube(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 }
 
 \examples{
-### Generate 3 FCDs for k = 3 with different numbers of center runs
-### library(DoE.wrapper)
-FCD3.1 <- ccd.design(nfactors=3,  ncenter = 1, alpha = 1, randomize = FALSE)
-FCD3.1 <- FCD3.1[c(-9),-1]
-FCD3.2 <- ccd.design(nfactors=3,  ncenter = 3, alpha = 1, randomize = FALSE)
-FCD3.2 <- FCD3.2[c(-9,-10,-11),-1]
-FCD3.3 <- ccd.design(nfactors=3,  ncenter = 5, alpha = 1, randomize = FALSE)
-FCD3.3 <- FCD3.3[c(-9,-10,-11,-12,-13),-1]
-### create a FDS plot
-#  fds.cube(FCD3.1,FCD3.2,FCD3.3,
-#           des.names = c("FCD 1","FCD 2","FCD 3"))
+CCD1<- gen.CCD(n.vars = 4, n.center = 2, alpha = 1)
+CCD2<- gen.CCD(n.vars = 4, n.center = 5, alpha = 1)
+fds.cube(CCD1, CCD2)
 }
 
 

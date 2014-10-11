@@ -24,15 +24,8 @@ fds.sphere(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   \code{fds.sphere} is called to generate Fraction of Design Space plots for spherical-region designs.
 }
 \examples{
-### Generate 3 CCDs for k = 5 with different alpha's
-### library(DoE.wrapper) 
-CCD5.1 <- ccd.design(nfactors=5,  ncenter = 2, alpha = 1.5, randomize = FALSE)
-CCD5.1 <- CCD5.1[c(-17,-18),-1]
-CCD5.2 <- ccd.design(nfactors=5,  ncenter = 2, alpha = 2, randomize = FALSE)
-CCD5.2 <- CCD5.2[c(-17,-18),-1]
-CCD5.3 <- ccd.design(nfactors=5,  ncenter = 2, alpha = sqrt(5), randomize = FALSE)
-CCD5.3 <- CCD5.3[c(-17,-18),-1]
-### create a FDS plot
-fds.sphere(CCD5.1,CCD5.2,CCD5.3,
-    des.names = c("CCD, alpha = 1.5","CCD, alpha = 2","CCD, alpha = sqrt(5)"))
+CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)
+CCD2<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1.6817)
+CCD3<- gen.CCD(n.vars = 3, n.center = 2, alpha = sqrt(3))
+fds.sphere(CCD1, CCD2, CCD3)
 }

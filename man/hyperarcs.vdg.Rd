@@ -23,9 +23,8 @@ hyperarcs.vdg(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 }
 
 \examples{
-# library(DoE.wrapper)
-FCD3.1 <- ccd.design(nfactors=3,  ncenter = 1, alpha = 1, randomize = FALSE)
-FCD3.1 <- FCD3.1[c(-9),-1]
-# hyperarcs.vdg(FCD3.1, des.names = c("FCD 1"))
+CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)
+CCD2<- gen.CCD(n.vars = 3, n.center = 5, alpha = 1)
+hyperarcs.vdg(CCD1, CCD2)
 }
 
