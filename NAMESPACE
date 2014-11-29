@@ -4,6 +4,12 @@ export(spv,
       fds.cube,
       hyperarcs.vdg,
       gen.Factr,
-      gen.CCD)
+      gen.CCD, 
+      gen.BBD,
+      gen.HSCD,
+      gen.PBCD,
+      gen.Roquemore,
+      gen.USD,
+      Borkowski2003)
 import(AlgDesign)
 importFrom("permute", shuffle, shuffleSet)

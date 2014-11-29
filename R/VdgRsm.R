@@ -1,5 +1,4 @@
 ####################   spv function   #####################
-
 spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
                     des.names = c("Design 1","Design 2","Design 3"),
                     scale = TRUE, add.pts = TRUE){  
@@ -1139,3 +1138,957 @@ gen.CCD <- function(n.vars, n.center, alpha, varNames){
   return(CCD.Dmatrix)
 }
 
+####################################################################
+####        generate Hartley's Small Composite Designs          ####
+####################################################################
+gen.HSCD<- function(k, alpha ="rotatable", n.center = 0){
+  if(!(k >=2 && k <=7) | !(k%%1==0)){
+    print("This function now provides Hartley's Small Composite Designs for k = 2 to 7 ")
+    stop
+  }  
+  if(k == 2){
+    if(alpha == "rotatable") a <- (2)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD2 <- matrix(c(
+      -1,   -1,
+      1,    1,
+      -a,    0,
+      a,    0,
+      0,   -a,
+      0,    a),
+      byrow = TRUE, ncol = k)
+    HSCD2 <- as.data.frame(rbind(HSCD2,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD2) <- paste("X",1:k,sep="")
+    return(HSCD2)
+  }
+  
+  if(k == 3){
+    if(alpha == "rotatable") a <- (4)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD3 <- matrix(c(
+      -1,   -1,   1,
+      1,   -1,  -1,
+      -1,    1,  -1,
+      1,    1,   1,
+      -a,    0,   0,
+      a,    0,   0,
+      0,   -a,   0,
+      0,    a,   0,
+      0,    0,  -a,
+      0,    0,   a),
+      byrow = TRUE, ncol = k)
+    HSCD3 <- as.data.frame(rbind(HSCD3,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD3) <- paste("X",1:k,sep="")
+    return(HSCD3)
+  }
+  
+  if(k == 4){
+    if(alpha == "rotatable") a <- (8)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD4 <- matrix(c(
+      -1,   -1,  -1,   1,
+      1,   -1,  -1,   1,
+      -1,    1,  -1,  -1,
+      1,    1,  -1,  -1,     
+      -1,   -1,   1,  -1,
+      1,   -1,   1,  -1,
+      -1,    1,   1,   1,
+      1,    1,   1,   1,          
+      -a,    0,   0,   0,
+      a,    0,   0,   0,
+      0,   -a,   0,   0,
+      0,    a,   0,   0,
+      0,    0,  -a,   0,
+      0,    0,   a,   0,
+      0,    0,   0,  -a,
+      0,    0,   0,   a),
+      byrow = TRUE, ncol = k)
+    HSCD4 <- as.data.frame(rbind(HSCD4,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD4) <- paste("X",1:k,sep="")
+    return(HSCD4)
+  }
+  
+  if(k == 5){
+    if(alpha == "rotatable") a <- (16)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD5 <- matrix(c(
+      -1,   -1,  -1,  -1,   1,
+      1,   -1,  -1,  -1,  -1,
+      -1,    1,  -1,  -1,  -1,
+      1,    1,  -1,  -1,   1,       
+      -1,   -1,   1,  -1,  -1,
+      1,   -1,   1,  -1,   1,
+      -1,    1,   1,  -1,   1,
+      1,    1,   1,  -1,  -1,    
+      -1,   -1,  -1,   1,  -1,
+      1,   -1,  -1,   1,   1,
+      -1,    1,  -1,   1,   1,
+      1,    1,  -1,   1,  -1,    
+      -1,   -1,   1,   1,   1,
+      1,   -1,   1,   1,  -1,
+      -1,    1,   1,   1,  -1,
+      1,    1,   1,   1,   1,      
+      -a,    0,   0,   0,   0,
+      a,    0,   0,   0,   0,
+      0,   -a,   0,   0,   0,
+      0,    a,   0,   0,   0,
+      0,    0,  -a,   0,   0,
+      0,    0,   a,   0,   0,
+      0,    0,   0,  -a,   0,
+      0,    0,   0,   a,   0,
+      0,    0,   0,   0,  -a,
+      0,    0,   0,   0,   a),
+      byrow = TRUE, ncol = k)
+    HSCD5 <- as.data.frame(rbind(HSCD5,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD5) <- paste("X",1:k,sep="")
+    return(HSCD5)
+  }
+  
+  if(k == 6){
+    if(alpha == "rotatable") a <- (16)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD6 <- matrix(c(
+      -1,   -1,  -1,  -1,   1,   1,
+      1,   -1,  -1,  -1,  -1,   1,
+      -1,    1,  -1,  -1,  -1,   1,
+      1,    1,  -1,  -1,   1,   1,          
+      -1,   -1,   1,  -1,   1,  -1,
+      1,   -1,   1,  -1,  -1,  -1,
+      -1,    1,   1,  -1,  -1,  -1,
+      1,    1,   1,  -1,   1,  -1,   
+      -1,   -1,  -1,   1,   1,  -1,
+      1,   -1,  -1,   1,  -1,  -1,
+      -1,    1,  -1,   1,  -1,  -1,
+      1,    1,  -1,   1,   1,  -1,   
+      -1,   -1,   1,   1,   1,   1,
+      1,   -1,   1,   1,  -1,   1,
+      -1,    1,   1,   1,  -1,   1,
+      1,    1,   1,   1,   1,   1,      
+      -a,    0,   0,   0,   0,   0,
+      a,    0,   0,   0,   0,   0,
+      0,   -a,   0,   0,   0,   0,
+      0,    a,   0,   0,   0,   0,
+      0,    0,  -a,   0,   0,   0,
+      0,    0,   a,   0,   0,   0,
+      0,    0,   0,  -a,   0,   0,
+      0,    0,   0,   a,   0,   0,
+      0,    0,   0,   0,  -a,   0,
+      0,    0,   0,   0,   a,   0,
+      0,    0,   0,   0,   0,  -a,
+      0,    0,   0,   0,   0,   a    
+    ),byrow = TRUE, ncol = k)
+    HSCD6 <- as.data.frame(rbind(HSCD6,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD6) <- paste("X",1:k,sep="")
+    return(HSCD6)
+  }
+  
+  if(k == 7){
+    if(alpha == "rotatable") a <- (32)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    HSCD7 <- matrix(c(
+      -1,   -1,  -1,  -1,  -1,   1,   1,
+      1,   -1,  -1,  -1,  -1,  -1,   1,
+      -1,    1,  -1,  -1,  -1,  -1,   1,
+      1,    1,  -1,  -1,  -1,   1,   1,    
+      -1,   -1,   1,  -1,  -1,   1,  -1,
+      1,   -1,   1,  -1,  -1,  -1,  -1,
+      -1,    1,   1,  -1,  -1,  -1,  -1,
+      1,    1,   1,  -1,  -1,   1,  -1,    
+      -1,   -1,  -1,   1,  -1,   1,  -1,
+      1,   -1,  -1,   1,  -1,  -1,  -1,
+      -1,    1,  -1,   1,  -1,  -1,  -1,
+      1,    1,  -1,   1,  -1,   1,  -1,
+      -1,   -1,   1,   1,  -1,   1,   1,
+      1,   -1,   1,   1,  -1,  -1,   1,
+      -1,    1,   1,   1,  -1,  -1,   1,
+      1,    1,   1,   1,  -1,   1,   1,
+      -1,   -1,  -1,  -1,   1,   1,   1,
+      1,   -1,  -1,  -1,   1,  -1,   1,
+      -1,    1,  -1,  -1,   1,  -1,   1,
+      1,    1,  -1,  -1,   1,   1,   1,    
+      -1,   -1,   1,  -1,   1,   1,  -1,
+      1,   -1,   1,  -1,   1,  -1,  -1,
+      -1,    1,   1,  -1,   1,  -1,  -1,
+      1,    1,   1,  -1,   1,   1,  -1,  
+      -1,   -1,  -1,   1,   1,   1,  -1,
+      1,   -1,  -1,   1,   1,  -1,  -1,
+      -1,    1,  -1,   1,   1,  -1,  -1,
+      1,    1,  -1,   1,   1,   1,  -1, 
+      -1,   -1,   1,   1,   1,   1,   1,
+      1,   -1,   1,   1,   1,  -1,   1,
+      -1,    1,   1,   1,   1,  -1,   1,
+      1,    1,   1,   1,   1,   1,   1,          
+      -a,    0,   0,   0,   0,   0,   0,
+      a,    0,   0,   0,   0,   0,   0,
+      0,   -a,   0,   0,   0,   0,   0,
+      0,    a,   0,   0,   0,   0,   0,
+      0,    0,  -a,   0,   0,   0,   0,
+      0,    0,   a,   0,   0,   0,   0,
+      0,    0,   0,  -a,   0,   0,   0,
+      0,    0,   0,   a,   0,   0,   0,
+      0,    0,   0,   0,  -a,   0,   0,
+      0,    0,   0,   0,   a,   0,   0,
+      0,    0,   0,   0,   0,  -a,   0,
+      0,    0,   0,   0,   0,   a,   0,    
+      0,    0,   0,   0,   0,   0,  -a,
+      0,    0,   0,   0,   0,   0,   a   
+    ),byrow = TRUE, ncol = k)
+    HSCD7 <- as.data.frame(rbind(HSCD7,matrix(rep(0,k*n.center),ncol=k)))
+    names(HSCD7) <- paste("X",1:k,sep="")
+    return(HSCD7)
+  }  
+}
+
+####################################################################
+####              generate Hybrid Design Roquemore              ####
+####################################################################
+gen.Roquemore<- function(k,  n.center = 0){
+  if(!(k == 3 || k == 4 || k == 6) | !(k%%1==0)){
+    print("Roquemore's designs are allowed for k = 3, 4, or 6 only")
+    stop
+  }  
+  if(k == 3){
+    R310 <- matrix(c(
+      0,     0,   1.2906,
+      0,     0,   -.1360, 
+      -1,    -1,    .6386, 
+      1,    -1,    .6386, 
+      -1,     1,    .6386, 
+      1,     1,    .6386, 
+      1.736,     0,   -.9273,
+      -1.736,     0,   -.9273,
+      0, 1.736,   -.9273,
+      0,-1.736,   -.9273),
+      byrow = TRUE, ncol = k)
+    R310 <- as.data.frame(rbind(R310,matrix(rep(0,k*n.center),ncol=k)))
+    names(R310) <- paste("X",1:k,sep="")
+    
+    R311A <- matrix(c(
+      0,       0,     sqrt(2),
+      0,       0,    -sqrt(2), 
+      -1,      -1,   1/sqrt(2), 
+      1,      -1,   1/sqrt(2),
+      -1,       1,   1/sqrt(2),
+      1,       1,   1/sqrt(2),
+      sqrt(2),       0,  -1/sqrt(2),
+      -sqrt(2),       0,  -1/sqrt(2),
+      0, sqrt(2),  -1/sqrt(2),
+      0,-sqrt(2),  -1/sqrt(2),
+      0,       0,          0),
+      byrow = TRUE, ncol = k)
+    R311A <- as.data.frame(rbind(R311A,matrix(rep(0,k*n.center),ncol=k)))
+    names(R311A) <- paste("X",1:k,sep="")
+    
+    a1.hb <- .7507;   a2.hb <- 2.1063;
+    R311B <- matrix(c(
+      0,       0,     sqrt(6),
+      0,       0,    -sqrt(6), 
+      -a1.hb,   a2.hb,           1, 
+      a2.hb,   a1.hb,           1, 
+      a1.hb,  -a2.hb,           1, 
+      -a2.hb,  -a1.hb,           1, 
+      a1.hb,   a2.hb,          -1, 
+      a2.hb,  -a1.hb,          -1, 
+      -a1.hb,  -a2.hb,          -1, 
+      -a2.hb,   a1.hb,          -1,
+      0,       0,          0), 
+      byrow = TRUE, ncol = k)
+    R311B <- as.data.frame(rbind(R311B,matrix(rep(0,k*n.center),ncol=k)))
+    names(R311B) <- paste("X",1:k,sep="")
+    
+    Roquemore.3<- list(R310=R310,R311A=R311A,R311B=R311B)
+    return(Roquemore.3)
+  }  
+  if(k == 4){
+    R416A <- matrix(c(
+      0,       0,       0,  1.7844,
+      0,       0,       0, -1.4945, 
+      -1,      -1,      -1,    .6444,
+      1,      -1,      -1,    .6444,     
+      -1,       1,      -1,    .6444,     
+      1,       1,      -1,    .6444,       
+      -1,      -1,       1,    .6444,
+      1,      -1,       1,    .6444,     
+      -1,       1,       1,    .6444,     
+      1,       1,       1,    .6444,   
+      1.6853,       0,       0,   -.9075,   
+      -1.6853,       0,       0,   -.9075,    
+      0,  1.6853,       0,   -.9075,   
+      0, -1.6853,       0,   -.9075,    
+      0,       0,  1.6853,   -.9075,   
+      0,       0, -1.6853,   -.9075),  
+      byrow = TRUE, ncol = k)
+    R416A <- as.data.frame(rbind(R416A,matrix(rep(0,k*n.center),ncol=k)))
+    names(R416A) <- paste("X",1:k,sep="")
+    
+    R416B <- matrix(c(
+      0,       0,       0,  1.7317,
+      0,       0,       0, -0.2692, 
+      -1,      -1,      -1,    .6045,
+      1,      -1,      -1,    .6045,     
+      -1,       1,      -1,    .6045,     
+      1,       1,      -1,    .6045,       
+      -1,      -1,       1,    .6045,
+      1,      -1,       1,    .6045,     
+      -1,       1,       1,    .6045,     
+      1,       1,       1,    .6045,   
+      1.5177,       0,       0,  -1.0498,   
+      -1.5177,       0,       0,  -1.0498,  
+      0,  1.5177,       0,  -1.0498,   
+      0, -1.5177,       0,  -1.0498, 
+      0,       0,  1.5177,  -1.0498,   
+      0,       0, -1.5177,  -1.0498),  
+      byrow = TRUE, ncol = k)
+    R416B <- as.data.frame(rbind(R416B,matrix(rep(0,k*n.center),ncol=k)))
+    names(R416B) <- paste("X",1:k,sep="")
+    
+    R416C <- matrix(c(
+      0,       0,       0,   1.7654,
+      -1,      -1,      -1,    .5675,
+      1,      -1,      -1,    .5675,     
+      -1,       1,      -1,    .5675,     
+      1,       1,      -1,    .5675,       
+      -1,      -1,       1,    .5675,
+      1,      -1,       1,    .5675,     
+      -1,       1,       1,    .5675,     
+      1,       1,       1,    .5675,   
+      1.4697,       0,       0,  -1.0509,   
+      -1.4697,       0,       0,  -1.0509,  
+      0,  1.4697,       0,  -1.0509,   
+      0, -1.4697,       0,  -1.0509, 
+      0,       0,  1.4697,  -1.0509,   
+      0,       0, -1.4697,  -1.0509,
+      0,       0,       0,        0),  
+      byrow = TRUE, ncol = k)
+    R416C <- as.data.frame(rbind(R416C,matrix(rep(0,k*n.center),ncol=k)))
+    names(R416C) <- paste("X",1:k,sep="")
+    
+    Roquemore.4<- list(R416A=R416A,R416B=R416B,R416C=R416C)
+    return(Roquemore.4)
+  }
+  if(k == 6){
+    
+    R628A <- matrix(c(
+      0,   0,   0,  0,  0,  4/sqrt(3),
+      -1,  -1,  -1, -1, -1,  1/sqrt(3),
+      1,   1,  -1, -1, -1,  1/sqrt(3),
+      1,  -1,   1, -1, -1,  1/sqrt(3),
+      -1,   1,   1, -1, -1,  1/sqrt(3),
+      1,  -1,  -1,  1, -1,  1/sqrt(3),
+      -1,   1,  -1,  1, -1,  1/sqrt(3),
+      -1,  -1,   1,  1, -1,  1/sqrt(3),
+      1,   1,   1,  1, -1,  1/sqrt(3),          
+      1,  -1,  -1, -1,  1,  1/sqrt(3),
+      -1,   1,  -1, -1,  1,  1/sqrt(3),
+      -1,  -1,   1, -1,  1,  1/sqrt(3),
+      1,   1,   1, -1,  1,  1/sqrt(3),
+      -1,  -1,  -1,  1,  1,  1/sqrt(3),
+      1,   1,  -1,  1,  1,  1/sqrt(3),
+      1,  -1,   1,  1,  1,  1/sqrt(3),
+      -1,   1,   1,  1,  1,  1/sqrt(3),  
+      2,   0,   0,  0,  0, -2/sqrt(3),
+      -2,   0,   0,  0,  0, -2/sqrt(3), 
+      0,   2,   0,  0,  0, -2/sqrt(3),
+      0,  -2,   0,  0,  0, -2/sqrt(3),  
+      0,   0,   2,  0,  0, -2/sqrt(3),
+      0,   0,  -2,  0,  0, -2/sqrt(3), 
+      0,   0,   0,  2,  0, -2/sqrt(3),
+      0,   0,   0, -2,  0, -2/sqrt(3),  
+      0,   0,   0,  0,  2, -2/sqrt(3),
+      0,   0,   0,  0, -2, -2/sqrt(3), 
+      0,   0,   0,  0,  0,          0),
+      byrow = TRUE, ncol = k)
+    
+    R628A <- as.data.frame(rbind(R628A,matrix(rep(0,k*n.center),ncol=k)))
+    names(R628A) <- paste("X",1:k,sep="")
+    
+    a3 <- 2.1749
+    R628B <- matrix(c(
+      0,   0,   0,  0,  0,   2.3677,
+      -1,  -1,  -1, -1, -1,    .6096,
+      1,   1,  -1, -1, -1,    .6096,
+      1,  -1,   1, -1, -1,    .6096,
+      -1,   1,   1, -1, -1,    .6096,
+      1,  -1,  -1,  1, -1,    .6096,
+      -1,   1,  -1,  1, -1,    .6096,
+      -1,  -1,   1,  1, -1,    .6096,
+      1,   1,   1,  1, -1,    .6096,     
+      1,  -1,  -1, -1,  1,    .6096,
+      -1,   1,  -1, -1,  1,    .6096,
+      -1,  -1,   1, -1,  1,    .6096,
+      1,   1,   1, -1,  1,    .6096,
+      -1,  -1,  -1,  1,  1,    .6096,
+      1,   1,  -1,  1,  1,    .6096,
+      1,  -1,   1,  1,  1,    .6096,
+      -1,   1,   1,  1,  1,    .6096,  
+      a3,   0,   0,  0,  0,   -1.031,
+      -a3,   0,   0,  0,  0,   -1.031,
+      0,  a3,   0,  0,  0,   -1.031,
+      0, -a3,   0,  0,  0,   -1.031,
+      0,   0,  a3,  0,  0,   -1.031,
+      0,   0, -a3,  0,  0,   -1.031,
+      0,   0,   0, a3,  0,   -1.031,
+      0,   0,   0,-a3,  0,   -1.031,
+      0,   0,   0,  0, a3,   -1.031,
+      0,   0,   0,  0,-a3,   -1.031,
+      0,   0,   0,  0,  0,   -1.811),
+      byrow = TRUE, ncol = k)
+    
+    R628B <- as.data.frame(rbind(R628B,matrix(rep(0,k*n.center),ncol=k)))
+    names(R628B) <- paste("X",1:k,sep="")
+    
+    Roquemore.6<- list(R628A=R628A,R628B=R628B)
+    return(Roquemore.6)
+  }
+}
+
+
+####################################################################
+####    generate Plackett-Burman Composite Designs (PBCD)        ###
+####################################################################
+gen.PBCD<- function(k, alpha ="rotatable", n.center = 0){
+  if(!(k >=3 && k <=7) | !(k%%1==0)){
+    print("This function now provides Plackett-Burman Composite Designs for k = 3 to 7 ")
+    stop
+  }  
+  if(k == 3){
+    if(alpha == "rotatable") a <- (4)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    PBCD3 <- matrix(c(
+      -1,   -1,   1,
+      -1,    1,  -1,
+      1,   -1,  -1,
+      1,    1,   1,
+      -a,    0,   0,
+      a,    0,   0,
+      0,   -a,   0,
+      0,    a,   0,
+      0,    0,  -a,
+      0,    0,   a),
+      byrow = TRUE, ncol = k)
+    PBCD3 <- as.data.frame(rbind(PBCD3,matrix(rep(0,k*n.center),ncol=k)))
+    names(PBCD3) <- paste("X",1:k,sep="")
+    return(PBCD3)
+  }
+  
+  if(k == 4){
+    if(alpha == "rotatable") a <- (8)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    PBCD4 <- matrix(c(
+      -1,   -1,  -1,   1,
+      1,   -1,  -1,   1,
+      -1,    1,  -1,  -1,
+      1,    1,  -1,  -1,     
+      -1,   -1,   1,  -1,
+      1,   -1,   1,  -1,
+      -1,    1,   1,   1,
+      1,    1,   1,   1,          
+      -a,    0,   0,   0,
+      a,    0,   0,   0,
+      0,   -a,   0,   0,
+      0,    a,   0,   0,
+      0,    0,  -a,   0,
+      0,    0,   a,   0,
+      0,    0,   0,  -a,
+      0,    0,   0,   a),
+      byrow = TRUE, ncol = k)
+    PBCD4 <- as.data.frame(rbind(PBCD4,matrix(rep(0,k*n.center),ncol=k)))
+    names(PBCD4) <- paste("X",1:k,sep="")
+    return(PBCD4)
+  }
+  
+  if(k == 5){
+    if(alpha == "rotatable") a <- (12)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    PBCD5 <- matrix(c(
+      1,   -1,   1,   1,   1,
+      1,    1,  -1,  -1,  -1,
+      -1,    1,   1,  -1,   1,
+      1,   -1,   1,  -1,   1,         
+      1,    1,  -1,   1,   1,
+      1,    1,   1,  -1,  -1,
+      -1,    1,   1,   1,  -1,
+      -1,   -1,   1,   1,  -1,       
+      -1,   -1,  -1,  -1,   1,
+      1,   -1,  -1,   1,  -1,
+      -1,    1,  -1,   1,   1,
+      -1,   -1,  -1,  -1,  -1,     
+      -a,    0,   0,   0,   0,
+      a,    0,   0,   0,   0,
+      0,   -a,   0,   0,   0,
+      0,    a,   0,   0,   0,
+      0,    0,  -a,   0,   0,
+      0,    0,   a,   0,   0,
+      0,    0,   0,  -a,   0,
+      0,    0,   0,   a,   0,
+      0,    0,   0,   0,  -a,
+      0,    0,   0,   0,   a),
+      byrow = TRUE, ncol = k)
+    PBCD5 <- as.data.frame(rbind(PBCD5,matrix(rep(0,k*n.center),ncol=k)))
+    names(PBCD5) <- paste("X",1:k,sep="")
+    return(PBCD5)
+  }
+  
+  if(k == 6){
+    if(alpha == "rotatable") a <- (16)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    PBCD6 <- matrix(c(
+      -1,   -1,  -1,  -1,   1,   1,
+      1,   -1,  -1,  -1,  -1,   1,
+      -1,    1,  -1,  -1,  -1,   1,
+      1,    1,  -1,  -1,   1,   1,          
+      -1,   -1,   1,  -1,   1,  -1,
+      1,   -1,   1,  -1,  -1,  -1,
+      -1,    1,   1,  -1,  -1,  -1,
+      1,    1,   1,  -1,   1,  -1,   
+      -1,   -1,  -1,   1,   1,  -1,
+      1,   -1,  -1,   1,  -1,  -1,
+      -1,    1,  -1,   1,  -1,  -1,
+      1,    1,  -1,   1,   1,  -1,   
+      -1,   -1,   1,   1,   1,   1,
+      1,   -1,   1,   1,  -1,   1,
+      -1,    1,   1,   1,  -1,   1,
+      1,    1,   1,   1,   1,   1,      
+      -a,    0,   0,   0,   0,   0,
+      a,    0,   0,   0,   0,   0,
+      0,   -a,   0,   0,   0,   0,
+      0,    a,   0,   0,   0,   0,
+      0,    0,  -a,   0,   0,   0,
+      0,    0,   a,   0,   0,   0,
+      0,    0,   0,  -a,   0,   0,
+      0,    0,   0,   a,   0,   0,
+      0,    0,   0,   0,  -a,   0,
+      0,    0,   0,   0,   a,   0,
+      0,    0,   0,   0,   0,  -a,
+      0,    0,   0,   0,   0,   a    
+    ),byrow = TRUE, ncol = k)
+    PBCD6 <- as.data.frame(rbind(PBCD6,matrix(rep(0,k*n.center),ncol=k)))
+    names(PBCD6) <- paste("X",1:k,sep="")
+    return(PBCD6)  
+  }
+  
+  if(k == 7){
+    if(alpha == "rotatable") a <- (24)^(1/4)
+    else{if(alpha == "face-center") a <- 1
+         else a<- alpha}
+    PBCD7 <- matrix(c(
+      1,   -1,  -1,  -1,   1,  -1,  -1,
+      1,    1,  -1,  -1,  -1,   1,   1,
+      1,    1,   1,  -1,  -1,  -1,  -1,
+      1,    1,   1,  -1,  -1,  -1,   1,             
+      1,    1,   1,   1,  -1,  -1,  -1,
+      -1,    1,   1,   1,   1,  -1,  -1,
+      1,   -1,   1,   1,   1,   1,  -1,
+      -1,    1,  -1,   1,   1,   1,  -1,            
+      1,   -1,   1,   1,   1,   1,   1,
+      1,    1,  -1,  -1,   1,   1,   1,
+      -1,    1,   1,   1,  -1,   1,   1,
+      -1,   -1,   1,  -1,   1,  -1,   1,      
+      1,   -1,  -1,   1,  -1,   1,   1,
+      1,    1,  -1,   1,   1,  -1,  -1,
+      -1,    1,   1,  -1,   1,   1,   1,
+      -1,   -1,   1,  -1,  -1,   1,  -1,      
+      1,   -1,  -1,   1,  -1,  -1,   1,
+      -1,    1,  -1,   1,   1,  -1,   1,
+      1,   -1,   1,  -1,   1,   1,  -1,
+      -1,    1,  -1,  -1,  -1,   1,  -1,
+      -1,   -1,   1,   1,  -1,  -1,   1,
+      -1,   -1,  -1,  -1,   1,  -1,   1,
+      -1,   -1,  -1,   1,  -1,   1,  -1,
+      -1,   -1,  -1,  -1,  -1,  -1,  -1,      
+      -a,    0,   0,   0,   0,   0,   0,
+      a,    0,   0,   0,   0,   0,   0,
+      0,   -a,   0,   0,   0,   0,   0,
+      0,    a,   0,   0,   0,   0,   0,
+      0,    0,  -a,   0,   0,   0,   0,
+      0,    0,   a,   0,   0,   0,   0,
+      0,    0,   0,  -a,   0,   0,   0,
+      0,    0,   0,   a,   0,   0,   0,
+      0,    0,   0,   0,  -a,   0,   0,
+      0,    0,   0,   0,   a,   0,   0,
+      0,    0,   0,   0,   0,  -a,   0,
+      0,    0,   0,   0,   0,   a,   0,    
+      0,    0,   0,   0,   0,   0,  -a,
+      0,    0,   0,   0,   0,   0,   a   
+    ),byrow = TRUE, ncol = k)
+    PBCD7 <- as.data.frame(rbind(PBCD7,matrix(rep(0,k*n.center),ncol=k)))
+    names(PBCD7) <- paste("X",1:k,sep="")
+    return(PBCD7)
+  }  
+}
+
+####################################################################
+####         generate (Doehlert) Uniform Shell Designs (USD)     ###
+####################################################################
+
+gen.USD<- function(k, alpha = 1){
+  if(!(k >=2 && k <=6) | !(k%%1==0)){
+    print("This function now provides Uniform Shell (Doehlert) Designs for k = 2 to 6")
+    stop
+  }  
+  if(k == 2){
+    X1 = c(0,1,-1,.5,-.5,.5,-.5)
+    X2 = c(0,0,0,.86602,-.86602,-.86602,.86602)
+    Doehlert2 <- data.frame(X1,X2)
+    return(alpha*Doehlert2)
+  } 
+  
+  if(k == 3){
+    X1 = c(0,1,-1,.5,-.5,.5,-.5,.5,-.5,.5,0,-.5,0)
+    X2 = c(0,0,0,.86602,-.86602,-.86602,.86602,.28868,-.28868,-.28868,.57735,.28868,-.57735)
+    X3 = c(rep(0,7),.81650,-.81650,-.81650,-.81650,.81650,.81650)
+    Doehlert3 <- data.frame(X1,X2,X3)
+    return(alpha*Doehlert3)
+  }
+  
+  if(k == 4){
+    X1 = c(0,1,-1,.5,-.5,.5,-.5,.5,-.5,.5,0,-.5,0,.5,-.5,.5,0,0,-.5,0,0)
+    X2 = c(0,0,0,.86602,-.86602,-.86602,.86602,.28868,-.28868,-.28868,.57735,.28868,-.57735,
+           .28868,-.28868,-.28868,.57735,0,.28868,-.57735,0)
+    X3 = c(rep(0,7),.81650,-.81650,-.81650,-.81650,.81650,.81650,.20413,-.20413,-.20413,-.20413,
+           .61238,.20413,.20413,-.61238)
+    X4 = c(rep(0,13),.79057,-.79057,-.79057,-.79057,-.79057,.79057,.79057,.79057)
+    Doehlert4 <- data.frame(X1,X2,X3,X4)
+    return(alpha*Doehlert4)
+  }
+  
+  if(k == 5){
+    X1 = c(0,1,-1,.5,-.5,.5,-.5,.5,-.5,.5,0,-.5,0,.5,-.5,.5,0,0,-.5,0,0,
+           .5,-.5,.5,0,0,0,-.5,0,0,0)
+    X2 = c(0,0,0,.86602,-.86602,-.86602,.86602,.28868,-.28868,-.28868,.57735,.28868,-.57735,
+           .28868,-.28868,-.28868,.57735,0,.28868,-.57735,0,.28868,-.28868,-.28868,.57735,0,0,
+           .28868,-.57735,0,0)
+    X3 = c(rep(0,7),.81650,-.81650,-.81650,-.81650,.81650,.81650,.20413,-.20413,-.20413,-.20413,
+           .61238,.20413,.20413,-.61238,.20413,-.20413,-.20413,-.20413,.61238,0,.20413,.20413,
+           -.61238,0)
+    X4 = c(rep(0,13),.79057,-.79057,-.79057,-.79057,-.79057,.79057,.79057,.79057,
+           .15812,-.15812,-.15812,-.15812,-.15812,.63246,.15812,.15812,.15812,-.63246)
+    X5 = c(rep(0,21),.77460,rep(-.77460,5),rep(.77460,4))
+    Doehlert5 <- data.frame(X1,X2,X3,X4,X5)
+    return(alpha*Doehlert5)
+  }
+  
+  if(k == 6){
+    X1 = c(0,1,-1,.5,-.5,.5,-.5,.5,-.5,.5,0,-.5,0,.5,-.5,.5,0,0,-.5,0,0,
+           .5,-.5,.5,0,0,0,-.5,0,0,0,.5,-.5,.5,0,0,0,0,-.5,0,0,0,0)
+    X2 = c(0,0,0,.86602,-.86602,-.86602,.86602,.28868,-.28868,-.28868,.57735,.28868,-.57735,
+           .28868,-.28868,-.28868,.57735,0,.28868,-.57735,0,.28868,-.28868,-.28868,.57735,0,0,
+           .28868,-.57735,0,0,.28868,-.28868,-.28868,.57735,0,0,0,.28868,-.57735,0,0,0)
+    X3 = c(rep(0,7),.81650,-.81650,-.81650,-.81650,.81650,.81650,.20413,-.20413,-.20413,-.20413,
+           .61238,.20413,.20413,-.61238,.20413,-.20413,-.20413,-.20413,.61238,0,.20413,.20413,
+           -.61238,0,.20413,-.20413,-.20413,-.20413,.61238,0,0,.20413,.20413,-.61238,0,0)
+    X4 = c(rep(0,13),.79057,-.79057,-.79057,-.79057,-.79057,.79057,.79057,.79057,
+           .15812,-.15812,-.15812,-.15812,-.15812,.63246,.15812,.15812,.15812,-.63246,
+           .15812,-.15812,-.15812,-.15812,-.15812,.63246,0,.15812,.15812,.15812,-.63246,0)
+    X5 = c(rep(0,21),.77460,rep(-.77460,5),rep(.77460,4),.1291,-.1291,-.1291,-.1291,-.1291,
+           -.1291,.6455,.1291,.1291,.1291,.1291,-.6455)
+    X6 = c(rep(0,31),.76376,rep(-.76376,6),rep(.76376,5))
+    Doehlert6 <- data.frame(X1,X2,X3,X4,X5,X6)
+    return(alpha*Doehlert6)
+  } 
+}
+
+####################################################################
+####            generate Box-Behnken Designs (BBD)               ###
+####################################################################
+gen.BBD <- function(k, n.center = 1){
+  if(!(k >=3 && k <=7) | !(k%%1==0)){
+    print("This function now provides Box-Behnken Designs for k = 3 to 7")
+    stop
+  } 
+  if(k == 3 | k == 4 | k == 5){
+    n.vars <- k
+    Two.col<- as.matrix(gen.Factr(n.vars = 2, n.levels = 2, scale = TRUE))
+    N.row <- 4*choose(n.vars,2) + n.center
+    BBD.matrix  <- matrix(0,N.row,n.vars)
+    count <- 0
+    for(i in 1:(n.vars-1)){
+      for(j in (i+1):n.vars){
+        count <- count + 1
+        BBD.matrix[(4*(count-1)+1):(4*count),i] <- Two.col[,1]
+        BBD.matrix[(4*(count-1)+1):(4*count),j] <- Two.col[,2]
+      }
+    }
+    BBD.matrix <- as.data.frame(BBD.matrix)
+    names(BBD.matrix) <- paste("X", 1:k, sep = "")
+    return(BBD.matrix)
+  }
+  if(k == 6){
+    Th3<- as.matrix(gen.Factr(n.vars = 3, n.levels = 2, scale = TRUE))
+    bch1<- cbind(Th3[,1], Th3[,2], rep(0,8), Th3[,3], rep(0,8), rep(0,8))
+    bch2<- cbind(rep(0,8) , Th3[,1], Th3[,2], rep(0,8),  Th3[,3],rep(0,8))
+    bch3<- cbind(rep(0,8) , rep(0,8), Th3[,1], Th3[,2],  rep(0,8), Th3[,3])
+    bch4<- cbind(Th3[,1] , rep(0,8),  rep(0,8), Th3[,2],  Th3[,3], rep(0,8))
+    bch5<- cbind(rep(0,8) , Th3[,1],  rep(0,8), rep(0,8),  Th3[,2], Th3[,3])
+    bch6<- cbind(Th3[,1] , rep(0,8), Th3[,2], rep(0,8),  rep(0,8), Th3[,3])
+    BBD.matrix <- rbind(bch1, bch2, bch3, bch4, bch5, bch6, matrix(rep(0,k*n.center),ncol=k))
+    BBD.matrix <- as.data.frame(BBD.matrix)
+    names(BBD.matrix) <- paste("X", 1:k, sep = "")
+    return(BBD.matrix)      
+  }
+  if(k == 7){
+    Th3<- as.matrix(gen.Factr(n.vars = 3, n.levels = 2, scale = TRUE))
+    bch1<- cbind(Th3[,1] , Th3[,2] , rep(0,8) , Th3[,3],  rep(0,8), rep(0,8), rep(0,8))
+    bch2<- cbind(rep(0,8) , Th3[,1] , Th3[,2] , rep(0,8),  Th3[,3], rep(0,8), rep(0,8))
+    bch3<- cbind(rep(0,8) , rep(0,8) , Th3[,1] , Th3[,2],  rep(0,8), Th3[,3], rep(0,8))
+    bch4<- cbind(rep(0,8) , rep(0,8) , rep(0,8) , Th3[,1],  Th3[,2], rep(0,8), Th3[,3])
+    bch5<- cbind(Th3[,1] , rep(0,8) , rep(0,8) , rep(0,8),  Th3[,2], Th3[,3], rep(0,8))
+    bch6<- cbind(rep(0,8) , Th3[,1] , rep(0,8) , rep(0,8),  rep(0,8), Th3[,2], Th3[,3])
+    bch7<- cbind(Th3[,1] , rep(0,8) , Th3[,2] , rep(0,8),  rep(0,8), rep(0,8), Th3[,3])
+    BBD.matrix <- rbind(bch1, bch2, bch3, bch4, bch5, bch6, bch7, matrix(rep(0,k*n.center),ncol=k))
+    BBD.matrix <- as.data.frame(BBD.matrix)
+    names(BBD.matrix) <- paste("X", 1:k, sep = "")
+    return(BBD.matrix)      
+  }
+}
+
+####################################################################
+####            generate Exact D-optimal (Borkowski)             ###
+####################################################################
+Borkowski2003 <- function(criterion, k, N){
+  if(!(k == 2 | k == 3) | !(k%%1==0) | !(criterion == "A" | criterion == "D")){
+    print("This function now provides only exact D- and A- optimal designs for k = 2 and 3")
+    stop
+  } 
+  if(criterion == "D"){
+    if(k == 2){
+      if(N == 6){
+        a = .394449; b = .131483;
+        D.exact.k2.N6 <- data.frame(X1=c(1,-1, -1, 1, a,-b),
+                                    X2=c(1, 1,-1, -a,-1, b))
+        return(D.exact.k2.N6) 
+      }
+      if(N == 7){
+        a = 0.067476; b = 0.091516;
+        D.exact.k2.N7 <- data.frame(X1=c(-1,-1, 1, 1, 1, a,-b),
+                                    X2=c(-1, 1,-1, 1,-a,-1, b))
+        return(D.exact.k2.N7)
+      }
+      if(N == 8){
+        a = 0.082078; b = -0.215160;
+        D.exact.k2.N8 <- data.frame(X1=c(-1,-1, 1, 1, 0, 1,-1, 0),
+                                    X2=c(-1, 1,-1, 1, 1, a, a, b))
+        return(D.exact.k2.N8)
+      }
+      if(N == 9){
+        D.exact.k2.N9 <- data.frame(X1=c(-1,-1, 1, 1, 0, 0, 1,-1, 0),
+                                    X2=c(-1, 1,-1, 1, 1,-1, 0, 0, 0))
+        return(D.exact.k2.N9)
+      }
+      if(N == 10){
+        a = 0.099329; b = 0.016983; c = 0.024346;
+        D.exact.k2.N10 <- data.frame(X1=c(-1,-1, 1, 1, 1, 1,-a,-b,-1, c),
+                                     X2=c(-1, 1,-1, 1,-1, a,-1, 1, b,-c))
+        return(D.exact.k2.N10)
+      }
+      if(N == 11){
+        a = 0.107871; b = -0.047248; 
+        D.exact.k2.N11 <- data.frame(X1=c(-1,-1, 1, 1,-1, 1, 0, 0, 1,-1, 0),
+                                     X2=c(-1, 1,-1, 1,-1,-1, 1,-1, a, a, b))
+        return(D.exact.k2.N11)
+      }
+      if(N == 12){
+        a = 0.006125; b =  0.101286;  c = 0.023820; 
+        D.exact.k2.N12 <- data.frame(X1=c(-1,-1, 1, 1,-1, 1, 1, 1,-a,-1,-b, c),
+                                     X2=c(-1, 1,-1, 1,-1, 1,-1, a,-1, b, 1,-c))
+        return(D.exact.k2.N12)
+      }
+      if((N <= 5) | (N >= 13) | !(N%%1 == 0)){
+        print("Only N = 6 to 12")
+        stop
+      }
+    }
+    if(k == 3){
+      if(N == 10){
+        a = .2912; b = .1925;
+        D.exact.k3.N10 <- matrix(c(
+          a, -1, -1, -1, a, -1, -1, -1, a,
+          -b, 1, -b, -b, -b, 1, 1, -b, -b, -1,1,1,1,1,-1,1,-1,1,1,1,1
+        ),byrow=TRUE, ncol = 3)
+        D.exact.k3.N10 <- as.data.frame(D.exact.k3.N10)
+        names(D.exact.k3.N10) <- paste("X",1:k,sep="")
+        return(D.exact.k3.N10)
+      }
+      if(N == 11){
+        part1<- gen.CCD(n.vars = 3, n.center = 0, alpha = 0)[1:8,]
+        D.exact.k3.N11 <- rbind(part1,c(1,0,0),c(0,1,0),c(0,0,1))
+        return(D.exact.k3.N11)
+      }
+      if(N == 12){
+        CCD<- gen.CCD(n.vars = 3, n.center = 0, alpha = 0)
+        CCD <- CCD[-(9:14),]
+        a = -0.0150; b = 0.0426;
+        D.exact.k3.N12 <- rbind(CCD, c(1,a,a),c(a,1,a),c(a,a,1),c(b,-1,-1))
+        return(D.exact.k3.N12)
+      }
+      if(N == 13){
+        CCD<- gen.CCD(n.vars = 3, n.center = 0, alpha = 0)
+        CCD <- CCD[-(9:14),]
+        CCD <- CCD[-8,]
+        a = 0.1463; b = 0.0644;
+        D.exact.k3.N13 <- rbind(CCD, c(a,1,1),c(1,a,1),c(1,1,a),c(b,b,-1),c(b,-1,b),c(-1,b,b))
+        return(D.exact.k3.N13)
+      }
+      if(N == 14){
+        CCD<- gen.CCD(n.vars = 3, n.center = 0, alpha = 0)
+        CCD <- CCD[-(9:14),]
+        a = -0.0187; b = 0.0583;
+        D.exact.k3.N14 <- rbind(CCD, c(a,1,1),c(1,a,1),c(1,1,a),c(b,b,-1),c(b,-1,b),c(-1,b,b))
+        return(D.exact.k3.N14)
+      }
+      if(N == 15){
+        CCD<- gen.CCD(n.vars = 3, n.center = 0, alpha = 0)
+        CCD <- CCD[-(9:14),]
+        D.exact.k3.N15 <- rbind(CCD, c(-.076,-1,1),c(-.0273,-1,-1),c(-1,-0.0905,-0.0282),
+                                c(1,.0305,-1),c(1,-1,.0193),c(.073,1,-.0417),c(.1205,.0431,1))
+        return(D.exact.k3.N15)
+      }
+      if((N <= 9) | (N >= 16) | !(N%%1 == 0)){
+        print("Only N = 10 to 15")
+        stop
+      }
+    }
+  }
+  if(criterion == "A"){
+    if(k == 2){
+      if(N == 6){
+        a = .503816; b = -.220484;
+        A.exact.k2.N6 <- data.frame(X1=c(1,-1, 0, -1, 1,0),
+                                    X2=c(-1, -1,1, a,a, b))
+        return(A.exact.k2.N6) 
+      }
+      if(N == 7){
+        a = .478014; b = -.218806;
+        A.exact.k2.N7 <- data.frame(X1=c(-1,1,0,-1,1,0,0),
+                                    X2=c(-1,-1,1,a,a,b,b))
+        return(A.exact.k2.N7)
+      }
+      if(N == 8){
+        a = .078929; b = .571386; c = -.029071; d = -.179098; e = .100290;
+        A.exact.k2.N8 <- data.frame(X1=c(-1,-1,1,a,1,c,c,-1),
+                                    X2=c(-1,1,-1,1,b,d,d,e))
+        return(A.exact.k2.N8)
+      }
+      if(N == 9){
+        A.exact.k2.N9 <- data.frame(X1=c(-1,-1, 1, 1, 0, 0, 1,-1, 0),
+                                    X2=c(-1, 1,-1, 1, 1,-1, 0, 0, 0))
+        return(A.exact.k2.N9)
+      }
+      if(N == 10){
+        A.exact.k2.N10 <- data.frame(X1=c(-1,-1, 1, 1,0,0,1,-1,0,0),
+                                     X2=c(-1, 1,-1, 1,1,-1,0,0,0,0))
+        A.exact.k2.N10<- list(Design = A.exact.k2.N10, Note = "This is also an exact IV-optimal design")
+        return(A.exact.k2.N10)
+      }
+      if(N == 11){
+        A.exact.k2.N11 <- data.frame(X1=c(-1,-1, 1, 1,0,0,1,-1,0,0,0),
+                                     X2=c(-1, 1,-1, 1,1,-1,0,0,0,0,0))
+        A.exact.k2.N11<- list(Design = A.exact.k2.N11, Note = "This is also an exact IV-optimal design")        
+        return(A.exact.k2.N11)
+      }
+      if(N == 12){
+        a = .059358; b =  -.021281;
+        A.exact.k2.N12 <- data.frame(X1=c(-1,-1, 1, 1,1,1,-1,a,a,b,b,b),
+                                     X2=c(-1, 1,-1, 1,0,0,0,-1,1,0,0,0))
+        return(A.exact.k2.N12)
+      }
+      if((N <= 5) | (N >= 13) | !(N%%1 == 0) ){
+        print("Only N = 6 to 12")
+        stop
+      }
+    }
+    if(k == 3){
+      if(N == 10){
+        a = .1749; b = .1072;
+        A.exact.k3.N10 <- matrix(c(
+          -a, -1,  1, 1, a, 1, 1, -1, -a,
+          -1, -b, b, b, 1, b, b, -b, -1, -1,1,-1,-1,1,1,1,1,-1,-1,-1,-1
+        ),byrow=TRUE, ncol = 3)
+        A.exact.k3.N10 <- as.data.frame(A.exact.k3.N10)
+        names(A.exact.k3.N10) <- paste("X",1:k,sep="")
+        return(A.exact.k3.N10)
+      }
+      if(N == 11){
+        a = .1223; b = .2166; c = .0914;
+        A.exact.k3.N11 <- matrix(c(
+          a,  -1,  1,
+          -1,   a,  1,
+          -1,  -1, -a,
+          -b,  -b, -1,
+          -b,   1,  b,
+          1,  -b,  b,
+          c,   c, -c,
+          1,  -1, -1,
+          1,   1, -1,
+          -1,   1, -1,
+          1,   1,  1
+        ), byrow= TRUE, ncol = 3)
+        A.exact.k3.N11 <- as.data.frame(A.exact.k3.N11)
+        names(A.exact.k3.N11) <- paste("X",1:k,sep="")
+        return(A.exact.k3.N11)
+      }
+      if(N == 12){
+        A.exact.k3.N12 <- matrix(c(
+          .1185,      1,      1,
+          -1, -.1185,      1,
+          -1,      1,  .0814,
+          .0232, -.0232, -.1403,
+          -.1811,     -1,  .2417,
+          1,  .1811,  .2417,
+          -.0474,  .0474,     -1,
+          -1,      1,     -1,
+          -1,     -1,     -1,
+          1,      1,     -1,
+          1,     -1,     -1,
+          1,     -1,      1
+        ), byrow= TRUE, ncol = 3)
+        A.exact.k3.N12 <- as.data.frame(A.exact.k3.N12)
+        names(A.exact.k3.N12) <- paste("X",1:k,sep="")
+        return(A.exact.k3.N12)
+      }
+      if(N == 13){
+        A.exact.k3.N13 <- matrix(c(
+          0, -.0537,      0,
+          0, -.0537,      0,
+          -.1243,      1,      1,
+          .1243,      1,     -1,
+          1, -.6353,     -1,
+          -1, -.6353,      1,
+          1,  .2472,      1,
+          -1,  .2472,     -1,
+          1,      1, -.1243,
+          -1,      1,  .1243, 
+          0,     -1,      0,
+          -1,     -1,     -1,
+          1,     -1,      1
+        ), byrow= TRUE, ncol = 3)
+        A.exact.k3.N13 <- as.data.frame(A.exact.k3.N13)
+        names(A.exact.k3.N13) <- paste("X",1:k,sep="")
+        return(A.exact.k3.N13)
+      }
+      if(N == 14){
+        A.exact.k3.N14<- gen.CCD(n.vars = 3, n.center = 0, alpha = 1)
+        A.exact.k3.N14 = list(Design = A.exact.k3.N14, note = "This is also an exact G-optimal design")
+        return(A.exact.k3.N14)
+      }
+      if(N == 15){
+        A.exact.k3.N15<- gen.CCD(n.vars = 3, n.center = 1, alpha = 1)
+        A.exact.k3.N15 = list(Design = A.exact.k3.N15, note = "This is also an exact IV-optimal design")
+        return(A.exact.k3.N15)
+      }
+      if((N <= 9)  | (N >= 16) | !(N%%1 == 0) ){
+        print("Only N = 10 to 15")
+      }
+    }
+  }
+}
