@@ -4,12 +4,14 @@ export(spv,
       fds.cube,
       hyperarcs.vdg,
       gen.Factr,
-      gen.CCD, 
+      gen.CCD,
+      Borkowski2003,
       gen.BBD,
       gen.HSCD,
       gen.PBCD,
       gen.Roquemore,
       gen.USD,
-      Borkowski2003)
-import(AlgDesign)
-importFrom("permute", shuffle, shuffleSet)
+      spvcontour  
+)
+import(AlgDesign, permute)
+

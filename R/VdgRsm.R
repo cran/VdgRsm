@@ -1,7 +1,8 @@
 ####################   spv function   #####################
+
 spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
-                    des.names = c("Design 1","Design 2","Design 3"),
-                    scale = TRUE, add.pts = TRUE){  
+                  des.names = c("Design 1","Design 2","Design 3"),
+                  scale = TRUE, add.pts = TRUE){  
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
     num.var <- length(row.vec)
@@ -20,7 +21,7 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   }
   
   design.matrix<- as.data.frame(matrix(as.numeric(paste(unlist(design.matrix))),byrow=FALSE,ncol=n.var))  
-  N.generated <- 20*n.var*(2^(n.var))
+  N.generated <- 25*n.var*(2^(n.var))
   model.X <- model.matrix( ~quad(.) , design.matrix)
   nrow <- nrow(model.X)
   ncol <- ncol(model.X)
@@ -79,7 +80,13 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   
   # Generate points on a sphere
   set.seed(1972264)
-  rand.sphere <- matrix(c(runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+  
+  Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+  Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+  Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+  Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+  
+  rand.sphere <- matrix(Urand,byrow= TRUE, ncol=n.var)
   radius <- seq(from = 0, to = sqrt(n.var), length.out = n.grid)
   norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)
   norm2.rand.rep <- matrix(rep(norm2.rand, each = n.var),byrow= TRUE, ncol=n.var)
@@ -162,7 +169,7 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
       mgp = c(2, 1, 0),
       xpd = FALSE)
   plot(Matrix.V[,1],Matrix.V[,2], type = "l", lwd = 2, lty = 1, 
-       ylim = c(lim.min-4, lim.max + 15), col = "#2E2E2E",
+       ylim = c(lim.min-4, lim.max + 12), col = "#2E2E2E",
        xlab = "Radius", 
        ylab = "Scaled Variance",
        panel.first = grid())
@@ -170,7 +177,7 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   lines(Matrix.V[,1],Matrix.V[,4], lwd = 2, col = "#2E2E2E", lty = 3)
   
   
-  legend(x = 0, y = lim.max + 16,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
+  legend(x = 0, y = lim.max + 13,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
          lwd=c(2,2,2),col=c(1,1,1),
          inset = 0.05, bg="transparent", bty = "n")
   
@@ -189,18 +196,18 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   
   # Put legend Design names
   if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0.6, y = lim.max + 16,  
+    legend(x = 0.6, y = lim.max + 13,  
            legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
            lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
            inset = 0.05, bg="transparent", bty = "n")
   }else{
     if(!is.null(design.matrix.2)){
-      legend(x = 0.6, y = lim.max + 16,  
+      legend(x = 0.6, y = lim.max + 13,  
              legend = c(des.names[1],des.names[2]),lty=c(1,1),
              lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0.6, y = lim.max + 16,  
+      legend(x = 0.6, y = lim.max + 13,  
              legend = c(des.names[1]),lty=c(1),
              lwd=c(2),col=c("#2E2E2E"),
              inset = 0.05, bg="transparent", bty = "n")
@@ -217,10 +224,21 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
     if(n.var <= 4){
       N.of.pts.gen <- 4*N.generated
       set.seed(1972264)
-      rand.sphere.2times <- matrix(c(runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+      
+      Urand2 <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+      Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
+      Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+      Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
+      
+      rand.sphere.2times <- matrix(Urand2,byrow= TRUE, ncol=n.var)
       norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
       norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
-      radius.random      <- runif(n = 4*N.generated, min = 0, max = sqrt(n.var))
+      
+      Urand3 <- runif(n = 4*N.generated, min = 0, max = sqrt(n.var))
+      Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
+      Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)
+      
+      radius.random      <- Urand3
       Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
       pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
       
@@ -229,10 +247,22 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
     if(n.var > 4){
       N.of.pts.gen <- 2*N.generated
       set.seed(1972264)
-      rand.sphere.2times <- matrix(c(runif(n=(2*n.var*N.generated), min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+      
+      Urand2 <- runif(n=(2*n.var*N.generated), min=-sqrt(n.var),max=sqrt(n.var))
+      Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
+      Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+      Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
+      
+      
+      rand.sphere.2times <- matrix(c(),byrow= TRUE, ncol=n.var)
       norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
       norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
-      radius.random      <- runif(n = 2*N.generated, min = 0, max = sqrt(n.var))
+      
+      Urand3 <- runif(n = 2*N.generated, min = 0, max = sqrt(n.var))
+      Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
+      Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)
+      
+      radius.random      <- Urand3      
       Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
       pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
     }
@@ -280,12 +310,11 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   }
 }
 
-
 ######################### fds.sphere function  ########################
 
 fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
-                           des.names = c("Design 1","Design 2","Design 3"),
-                           scale = TRUE){
+                         des.names = c("Design 1","Design 2","Design 3"),
+                         scale = TRUE){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -305,7 +334,7 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   }
   
   design.matrix<- as.data.frame(matrix(as.numeric(paste(unlist(design.matrix))),byrow=FALSE,ncol=n.var))  
-  N.generated <- 20*n.var*(2^(n.var))
+  N.generated <- 70*n.var*(2^(n.var))
   model.X <- model.matrix( ~quad(.) , design.matrix)
   nrow <- nrow(model.X)
   ncol <- ncol(model.X)
@@ -352,10 +381,21 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   if(n.var <= 4){
     N.of.pts.gen <- 4*N.generated
     set.seed(1972264)
-    rand.sphere.2times <- matrix(c(runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+    
+    Urand <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    rand.sphere.2times <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
-    norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
-    radius.random      <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var) 
+    
+    Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
+    Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    
+    radius.random      <- Urand2
     Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
     pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
   }
@@ -363,10 +403,21 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   if(n.var > 4){
     N.of.pts.gen <- 3*N.generated
     set.seed(1972264)
-    rand.sphere.2times <- matrix(c(runif(n=(3*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+    
+    Urand <- runif(n=(3*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    rand.sphere.2times <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
-    norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
-    radius.random      <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var) 
+    
+    Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
+    Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    
+    radius.random      <-  Urand2
     Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
     pred.model.random  <- model.matrix( ~ quad(.), Surface.pts.random)
   }
@@ -431,7 +482,7 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   plot(seq(0, 1, 0.01),quantile(Var.pred.random, probs = seq(0, 1, 0.01), type = 4),
        type = "l",lwd = 2, col = "#2E2E2E",
        xlab = "Fraction of design space",ylab = "Scaled Variance",
-       ylim = c(lim.min-4, lim.max + 15), panel.first = grid())
+       ylim = c(lim.min-4, lim.max + 12), panel.first = grid())
   
   # Make FDS plots for Design 2
   if(!is.null(design.matrix.2)){
@@ -444,18 +495,18 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   
   # Put legend in VDG plots
   if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0, y = lim.max + 16,  
+    legend(x = 0, y = lim.max + 12,  
            legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
            lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
            inset = 0.05, bg="transparent", bty = "n")
   }else{
     if(!is.null(design.matrix.2)){
-      legend(x = 0, y = lim.max + 16,  
+      legend(x = 0, y = lim.max + 12,  
              legend = c(des.names[1],des.names[2]),lty=c(1,1),
              lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0, y = lim.max + 16,  
+      legend(x = 0, y = lim.max + 12,  
              legend = c(des.names[1]),lty=c(1),
              lwd=c(2),col=c("#2E2E2E"),
              inset = 0.05, bg="transparent", bty = "n")
@@ -465,9 +516,10 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   text(sqrt(n.var)-0.15, lim.min -3 , paste("p =",ncol),col = "#8B8682")
 }
 
+
 #########################  cpv function ####################
 
-cpv <- function(design.matrix, add.pts = TRUE){
+cpv <- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1","Design 2"), add.pts = TRUE){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -502,7 +554,7 @@ cpv <- function(design.matrix, add.pts = TRUE){
   
   if(n.var <= 4){
     n.grid <- length(critical.R)
-    N.generated <- 8000
+    N.generated <- 10000
     model.X <- model.matrix( ~quad(.) , design.matrix)
     nrow <- nrow(model.X)
     ncol <- ncol(model.X)
@@ -510,9 +562,35 @@ cpv <- function(design.matrix, add.pts = TRUE){
     
     Matrix.V <- matrix(numeric(0), ncol = 4, nrow = n.grid)
     colnames(Matrix.V) <- c("Radius","  max.V","  min.V"," average.V")
+    
+    if(!is.null(design.matrix.2)){
+      Matrix.V.2 <- matrix(numeric(0), ncol = 4, nrow = n.grid)
+      colnames(Matrix.V.2) <- c("Radius","  max.V","  min.V"," average.V")  
+    }# Design 2
+    
+    # Design 2
+    if(!is.null(design.matrix.2)){
+      n.grid <- length(critical.R)
+      N.generated <- 10000 
+      model.X.2 <- model.matrix( ~quad(.) , design.matrix.2)
+      nrow.2 <- nrow(model.X.2)
+      ncol.2 <- ncol(model.X.2)
+      if(ncol != ncol.2){
+        stop("Designs need to have the same number of design factors")
+      }
+      M.inv.2<- nrow.2*solve(t(model.X.2)%*%model.X.2)   
+    } # Design 2
+    
+    
     # Generate points on a sphere
     set.seed(1234567)
-    rand.sphere <- matrix(c(runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+    
+    Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    rand.sphere <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)
     norm2.rand.rep <- matrix(rep(norm2.rand, each = n.var),byrow= TRUE, ncol=n.var)
     generated.pts<- as.data.frame(rand.sphere/norm2.rand.rep)
@@ -540,16 +618,39 @@ cpv <- function(design.matrix, add.pts = TRUE){
       average <- mean(Var.pred)
       Matrix.V[count,] <- c(R,maximum,minimum,average) 
       
+      # Design 2
+      if(!is.null(design.matrix.2)){
+        
+        Var.pred.2 <- numeric(nrow.surf)
+        for(kk in 1:nrow.surf){
+          each.obs <- as.vector(pred.model[kk, ])
+          Var.pred.2[kk] <- as.numeric(t(each.obs)%*%M.inv.2%*%each.obs)
+        }
+        
+        minimum.2 <- min(Var.pred.2)
+        maximum.2 <- max(Var.pred.2)
+        average.2 <- mean(Var.pred.2)
+        Matrix.V.2[count,] <- c(R,maximum.2 ,minimum.2 ,average.2) 
+        
+      }       
+      
     } 
     
     Matrix.V<- matrix(Matrix.V[is.na(Matrix.V) == FALSE],byrow = FALSE, ncol = 4)
     colnames(Matrix.V) <- c("Radius","  max.V","  min.V"," average.V")
     
+    # Design 2
+    if(!is.null(design.matrix.2)){
+      Matrix.V.2<- matrix(Matrix.V.2[is.na(Matrix.V.2) == FALSE],byrow = FALSE, ncol = 4)
+      colnames(Matrix.V.2) <- c("Radius","  max.V","  min.V"," average.V")      
+    }
+    ### End Design 2
     R <- critical.R[n.grid]
     Surface.pts<- as.data.frame(matrix(sample(c(-1,1),size = n.var*50,replace = TRUE),byrow = TRUE, ncol = n.var))
     
     Npt.extream <- dim(Surface.pts)[1]
     pred.model  <- model.matrix( ~quad(.), Surface.pts)
+    
     
     Var.pred <- numeric(Npt.extream)
     for(kk in 1:Npt.extream){
@@ -562,13 +663,41 @@ cpv <- function(design.matrix, add.pts = TRUE){
     average <- mean(Var.pred)
     Matrix.V<- rbind(Matrix.V,c(R,maximum,minimum,average))
     
+    # Design 2
+    if(!is.null(design.matrix.2)){
+      Var.pred.2 <- numeric(Npt.extream)
+      for(kk in 1:Npt.extream){
+        each.obs <- as.vector(pred.model[kk, ])
+        Var.pred.2[kk] <- as.numeric(t(each.obs)%*%M.inv.2%*%each.obs)
+      }
+      
+      minimum.2 <- min(Var.pred.2)
+      maximum.2 <- max(Var.pred.2)
+      average.2 <- mean(Var.pred.2)
+      Matrix.V.2<- rbind(Matrix.V.2, c(R,maximum.2,minimum.2,average.2))     
+    }
+    ### End Design 2
+    
+    
     #lim.max <- max(Matrix.V[,2],na.rm = TRUE)
     #lim.min <- min(Matrix.V[,3],na.rm = TRUE)
     
     # Find lim.max
     lim.max <- max(Matrix.V[,2])
+    
+    # Find lim.max
+    if(!is.null(design.matrix.2)){
+      lim.max <- max(c(Matrix.V[,2], Matrix.V.2[,2]))
+    }else{ 
+      lim.max <- max(Matrix.V[,2])
+    }
     # Find lim.min
-    lim.min <- min(Matrix.V[,3])
+    if(!is.null(design.matrix.2)){
+      lim.min <- min(c(Matrix.V[,3], Matrix.V.2[,3]))
+    }else{ 
+      lim.min <- min(Matrix.V[,3])
+    }
+    
     
     
     #windows(width = 5, height = 5)
@@ -579,23 +708,32 @@ cpv <- function(design.matrix, add.pts = TRUE){
         xpd = FALSE)
     
     plot(Matrix.V[,1],Matrix.V[,2], type = "l", lwd = 2, lty = 4, 
-         ylim = c(lim.min-4, lim.max + 13), col = "#2E2E2E",
+         ylim = c(lim.min-4, lim.max + 12), col = "#2E2E2E",
          xlab = "Radius", 
          ylab = "Scaled  Variance",
          panel.first = grid())
     lines(Matrix.V[,1],Matrix.V[,3], lwd = 2, col = "#2E2E2E", lty = 2)
-    legend(x = 0, y = lim.max + 14,  legend = c("Max","Min"),lty=c(4,2),
+    legend(x = 0, y = lim.max + 13,  legend = c("Max","Min"),lty=c(4,2),
            lwd=c(2,2),col=c(1,1),
            inset = 0.05, bg="transparent", bty = "n")
     abline(h = ncol, col = "#8B8682",  lwd = 1)
     text(sqrt(n.var)-0.15, lim.min -3 , paste("p =",ncol),col = "#8B8682")
     
-    
+    # Design 2
+    if(!is.null(design.matrix.2)){
+      lines(Matrix.V.2[,1],Matrix.V.2[,2], lwd = 2, col = "#EE4000", lty = 4)
+      lines(Matrix.V.2[,1],Matrix.V.2[,3], lwd = 2, col = "#EE4000", lty = 2)
+    }
     # Filling points
     if(add.pts == TRUE){
       set.seed(1972264)
-      Cuboidal.pts.random  <- matrix(runif(n = N.generated*n.var, min = -1, max = 1),
-                                     byrow = TRUE, ncol = n.var)      
+      
+      Urand <- runif(n = N.generated*n.var, min = -1, max = 1)
+      Urand <- ifelse(Urand < (-1+.001), -1, Urand)
+      Urand <- ifelse(Urand > ( 1-.001),  1, Urand)
+      Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+      
+      Cuboidal.pts.random  <- matrix(Urand, byrow = TRUE, ncol = n.var)      
       Cuboidal.pts.random  <- as.data.frame(Cuboidal.pts.random)
       pred.model.random  <- model.matrix( ~quad(.), Cuboidal.pts.random)
       radius.random<- apply(Cuboidal.pts.random, MARGIN = 1, norm2)
@@ -607,10 +745,39 @@ cpv <- function(design.matrix, add.pts = TRUE){
         Var.pred.random[kk] <- as.numeric(t(each.obs)%*%M.inv%*%each.obs)
       }
       points(radius.random,Var.pred.random, pch = ".", col = "#2E2E2E")
+      
+      if(!is.null(design.matrix.2)){
+        Var.pred.random.2 <- numeric(size.pred.rand)
+        for(kk in 1:size.pred.rand){
+          each.obs <- as.vector(pred.model.random[kk, ])
+          Var.pred.random.2[kk] <- as.numeric(t(each.obs)%*%M.inv.2%*%each.obs)
+        }
+        points(radius.random,Var.pred.random.2, pch = ".", col = "#EE4000")
+      }   
+      
     }
     
-    # Return Values
-    return(Matrix.V)   
+    # Put designs' name
+    if(!is.null(design.matrix.2)){
+      legend(x = 0.6, y = lim.max + 13,  
+             legend = c(des.names[1],des.names[2]),lty=c(1,1),
+             lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
+             inset = 0.05, bg="transparent", bty = "n")
+    }else{
+      legend(x = 0.6, y = lim.max + 13,  
+             legend = c(des.names[1]),lty=c(1),
+             lwd=c(2),col=c("#2E2E2E"),
+             inset = 0.05, bg="transparent", bty = "n")
+      
+    }
+    # Return Values          
+    if(!is.null(design.matrix.2)){
+      return(list(design.1 = Matrix.V, design.2 = Matrix.V.2))
+    }else{
+      return(Matrix.V)      
+    }       
+    
+    
   }
   if(n.var > 4 && n.var <= 6){
     n.grid <- length(critical.R)
@@ -624,7 +791,13 @@ cpv <- function(design.matrix, add.pts = TRUE){
     
     # Generate points on a sphere
     set.seed(1234567)
-    rand.sphere <- matrix(c(runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))),byrow= TRUE, ncol=n.var)
+    
+    Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    rand.sphere <- matrix(Urand, byrow= TRUE, ncol=n.var)
     norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)
     norm2.rand.rep <- matrix(rep(norm2.rand, each = n.var),byrow= TRUE, ncol=n.var)
     generated.pts<- as.data.frame(rand.sphere/norm2.rand.rep)
@@ -679,7 +852,7 @@ cpv <- function(design.matrix, add.pts = TRUE){
 ########################### fds.cube function  ########################
 
 fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
-                         des.names = c("Design 1","Design 2","Design 3")){
+                       des.names = c("Design 1","Design 2","Design 3")){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -729,8 +902,13 @@ fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NU
   
   if(n.var <= 4){
     set.seed(1972264)
-    Cuboidal.pts.random  <- matrix(runif(n = 7000*n.var, min = -1, max = 1),
-                                   byrow = TRUE, ncol = n.var)      
+    
+    Urand <- runif(n = 7000*n.var, min = -1, max = 1)
+    Urand <- ifelse(Urand < (-1+.001), -1, Urand)
+    Urand <- ifelse(Urand > ( 1-.001),  1, Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    Cuboidal.pts.random  <- matrix(Urand, byrow = TRUE, ncol = n.var)      
     Cuboidal.pts.random  <- as.data.frame(Cuboidal.pts.random)
     pred.model.random  <- model.matrix( ~quad(.), Cuboidal.pts.random)
     radius.random<- apply(Cuboidal.pts.random, MARGIN = 1, norm2)
@@ -738,8 +916,13 @@ fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NU
   
   if(n.var > 4){
     set.seed(1972264)
-    Cuboidal.pts.random  <- matrix(runif(n = 12000*n.var, min = -1, max = 1),
-                                   byrow = TRUE, ncol = n.var)      
+    
+    Urand <- runif(n = 12000*n.var, min = -1, max = 1)
+    Urand <- ifelse(Urand < (-1+.001), -1, Urand)
+    Urand <- ifelse(Urand > ( 1-.001),  1, Urand)
+    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    
+    Cuboidal.pts.random  <- matrix(Urand, byrow = TRUE, ncol = n.var)      
     Cuboidal.pts.random  <- as.data.frame(Cuboidal.pts.random)
     pred.model.random  <- model.matrix( ~quad(.), Cuboidal.pts.random)
     radius.random<- apply(Cuboidal.pts.random, MARGIN = 1, norm2)
@@ -801,7 +984,7 @@ fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NU
   plot(seq(0, 1, 0.01),quantile(Var.pred.random, probs = seq(0, 1, 0.01), type = 4),
        type = "l",lwd = 2, col = "#2E2E2E",
        xlab = "Fraction of design space",ylab = "Scaled Variance",
-       ylim = c(lim.min-4, lim.max + 15), panel.first = grid())
+       ylim = c(lim.min-4, lim.max + 12), panel.first = grid())
   
   # Make FDS plots for Design 2
   if(!is.null(design.matrix.2)){
@@ -814,18 +997,18 @@ fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NU
   
   # Put legend in VDG plots
   if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0, y = lim.max + 16,  
+    legend(x = 0, y = lim.max + 13,  
            legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
            lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
            inset = 0.05, bg="transparent", bty = "n")
   }else{
     if(!is.null(design.matrix.2)){
-      legend(x = 0, y = lim.max + 16,  
+      legend(x = 0, y = lim.max + 13,  
              legend = c(des.names[1],des.names[2]),lty=c(1,1),
              lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0, y = lim.max + 16,  
+      legend(x = 0, y = lim.max + 13,  
              legend = c(des.names[1]),lty=c(1),
              lwd=c(2),col=c("#2E2E2E"),
              inset = 0.05, bg="transparent", bty = "n")
@@ -838,7 +1021,7 @@ fds.cube <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NU
 ##########################  hyper.vdg #######################
 
 hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
-                             des.names = c("Design 1","Design 2","Design 3")){
+                           des.names = c("Design 1","Design 2","Design 3")){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -908,29 +1091,93 @@ hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 
     full.basket <- matrix(c(sample(c(-R,R), size = N.generated, replace = TRUE)),
                           ncol = 1, byrow = TRUE)
     if(n.var == 2){
-      mat.before <- cbind(full.basket,runif(n = N.generated, min = -R, max = R))
+      Urand<- runif(n = N.generated, min = -R, max = R)
+      Urand <- ifelse(Urand < (-R+.001), -R, Urand)
+      Urand <- ifelse(Urand > ( R-.001),  R, Urand)
+      Urand <- ifelse(-.001 < Urand & Urand < .001 ,  0, Urand)  
+      mat.before <- cbind(full.basket, Urand)
     }
     if(n.var == 3){
-      mat.before <- cbind(full.basket,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R))
+      Urand.1<- runif(n = N.generated, min = -R, max = R)
+      Urand.1 <- ifelse(Urand.1 < (-R+.001), -R, Urand.1)
+      Urand.1 <- ifelse(Urand.1 > ( R-.001),  R, Urand.1)
+      Urand.1 <- ifelse(-.001 < Urand.1 & Urand.1 < .001 ,  0, Urand.1)  
+      
+      Urand.2<- runif(n = N.generated, min = -R, max = R)
+      Urand.2<- ifelse(Urand.2 < (-R+.001), -R, Urand.2)
+      Urand.2 <- ifelse(Urand.2 > ( R-.001),  R, Urand.2)
+      Urand.2 <- ifelse(-.001 < Urand.2 & Urand.2 < .001 ,  0, Urand.2)  
+      
+      mat.before <- cbind(full.basket,  Urand.1,  Urand.2)
     }
     if(n.var == 4){
-      mat.before <- cbind(full.basket,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R))
+      Urand.1<- runif(n = N.generated, min = -R, max = R)
+      Urand.1 <- ifelse(Urand.1 < (-R+.001), -R, Urand.1)
+      Urand.1 <- ifelse(Urand.1 > ( R-.001),  R, Urand.1)
+      Urand.1 <- ifelse(-.001 < Urand.1 & Urand.1 < .001 ,  0, Urand.1)  
+      
+      Urand.2<- runif(n = N.generated, min = -R, max = R)
+      Urand.2<- ifelse(Urand.2 < (-R+.001), -R, Urand.2)
+      Urand.2 <- ifelse(Urand.2 > ( R-.001),  R, Urand.2)
+      Urand.2 <- ifelse(-.001 < Urand.2 & Urand.2 < .001 ,  0, Urand.2)  
+      
+      Urand.3<- runif(n = N.generated, min = -R, max = R)
+      Urand.3<- ifelse(Urand.3 < (-R+.001), -R, Urand.3)
+      Urand.3 <- ifelse(Urand.3 > ( R-.001),  R, Urand.3)
+      Urand.3 <- ifelse(-.001 < Urand.3 & Urand.3 < .001 ,  0, Urand.3)  
+      
+      mat.before <- cbind(full.basket,Urand.1, Urand.2, Urand.3)
     }
     if(n.var == 5){
-      mat.before <- cbind(full.basket,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R))
+      Urand.1<- runif(n = N.generated, min = -R, max = R)
+      Urand.1 <- ifelse(Urand.1 < (-R+.001), -R, Urand.1)
+      Urand.1 <- ifelse(Urand.1 > ( R-.001),  R, Urand.1)
+      Urand.1 <- ifelse(-.001 < Urand.1 & Urand.1 < .001 ,  0, Urand.1)  
+      
+      Urand.2<- runif(n = N.generated, min = -R, max = R)
+      Urand.2<- ifelse(Urand.2 < (-R+.001), -R, Urand.2)
+      Urand.2 <- ifelse(Urand.2 > ( R-.001),  R, Urand.2)
+      Urand.2 <- ifelse(-.001 < Urand.2 & Urand.2 < .001 ,  0, Urand.2)  
+      
+      Urand.3<- runif(n = N.generated, min = -R, max = R)
+      Urand.3<- ifelse(Urand.3 < (-R+.001), -R, Urand.3)
+      Urand.3 <- ifelse(Urand.3 > ( R-.001),  R, Urand.3)
+      Urand.3 <- ifelse(-.001 < Urand.3 & Urand.3 < .001 ,  0, Urand.3)  
+      
+      Urand.4<- runif(n = N.generated, min = -R, max = R)
+      Urand.4<- ifelse(Urand.4 < (-R+.001), -R, Urand.4)
+      Urand.4 <- ifelse(Urand.4 > ( R-.001),  R, Urand.4)
+      Urand.4 <- ifelse(-.001 < Urand.4 & Urand.4 < .001 ,  0, Urand.4)  
+      
+      mat.before <- cbind(full.basket, Urand.1 , Urand.2 , Urand.3 , Urand.4 )
     }
     if(n.var == 6){
-      mat.before <- cbind(full.basket,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R)
-                          ,runif(n = N.generated, min = -R, max = R))
+      Urand.1<- runif(n = N.generated, min = -R, max = R)
+      Urand.1 <- ifelse(Urand.1 < (-R+.001), -R, Urand.1)
+      Urand.1 <- ifelse(Urand.1 > ( R-.001),  R, Urand.1)
+      Urand.1 <- ifelse(-.001 < Urand.1 & Urand.1 < .001 ,  0, Urand.1)  
+      
+      Urand.2<- runif(n = N.generated, min = -R, max = R)
+      Urand.2<- ifelse(Urand.2 < (-R+.001), -R, Urand.2)
+      Urand.2 <- ifelse(Urand.2 > ( R-.001),  R, Urand.2)
+      Urand.2 <- ifelse(-.001 < Urand.2 & Urand.2 < .001 ,  0, Urand.2)  
+      
+      Urand.3<- runif(n = N.generated, min = -R, max = R)
+      Urand.3<- ifelse(Urand.3 < (-R+.001), -R, Urand.3)
+      Urand.3 <- ifelse(Urand.3 > ( R-.001),  R, Urand.3)
+      Urand.3 <- ifelse(-.001 < Urand.3 & Urand.3 < .001 ,  0, Urand.3)  
+      
+      Urand.4<- runif(n = N.generated, min = -R, max = R)
+      Urand.4<- ifelse(Urand.4 < (-R+.001), -R, Urand.4)
+      Urand.4 <- ifelse(Urand.4 > ( R-.001),  R, Urand.4)
+      Urand.4 <- ifelse(-.001 < Urand.4 & Urand.4 < .001 ,  0, Urand.4)  
+      
+      Urand.5<- runif(n = N.generated, min = -R, max = R)
+      Urand.5<- ifelse(Urand.5 < (-R+.001), -R, Urand.5)
+      Urand.5 <- ifelse(Urand.5 > ( R-.001),  R, Urand.5)
+      Urand.5 <- ifelse(-.001 < Urand.5 & Urand.5 < .001 ,  0, Urand.5) 
+      
+      mat.before <- cbind(full.basket, Urand.1 , Urand.2 , Urand.3 , Urand.4 , Urand.5)
     }
     Cuboidal.pts <- as.data.frame(t(apply(mat.before, MARGIN = 1, shuffle.fun)))
     pred.model  <- model.matrix( ~quad(.), Cuboidal.pts)
@@ -1005,7 +1252,7 @@ hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 
       mgp = c(2, 1, 0),
       xpd = FALSE)
   plot(Matrix.V.A[,1],Matrix.V.A[,2], type = "l", lwd = 2, lty = 1, 
-       ylim = c(lim.min-4, lim.max + 15), col = "#2E2E2E",
+       ylim = c(lim.min-4, lim.max + 12), col = "#2E2E2E",
        xlab = "Hypercube Radius", 
        ylab = "Scaled Variance",
        panel.first = grid())
@@ -1013,7 +1260,7 @@ hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 
   lines(Matrix.V.A[,1],Matrix.V.A[,4], lwd = 2, col = "#2E2E2E", lty = 3)
   
   
-  legend(x = 0, y = lim.max + 16,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
+  legend(x = 0, y = lim.max + 13,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
          lwd=c(2,2,2),col=c(1,1,1),
          inset = 0.05, bg="transparent", bty = "n")
   
@@ -1031,18 +1278,18 @@ hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 
   }
   # Put legend Design names
   if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0.4, y = lim.max + 16,  
+    legend(x = 0.4, y = lim.max + 13,  
            legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
            lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
            inset = 0.05, bg="transparent", bty = "n")
   }else{
     if(!is.null(design.matrix.2)){
-      legend(x = 0.4, y = lim.max + 16,  
+      legend(x = 0.4, y = lim.max + 13,  
              legend = c(des.names[1],des.names[2]),lty=c(1,1),
              lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0.4, y = lim.max + 16,  
+      legend(x = 0.4, y = lim.max + 13,  
              legend = c(des.names[1]),lty=c(1),
              lwd=c(2),col=c("#2E2E2E"),
              inset = 0.05, bg="transparent", bty = "n")
@@ -1062,6 +1309,7 @@ hyperarcs.vdg<- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 
     
   }
 }
+
 
 #########################  generate Factorial design ####################
 gen.Factr <-function(n.vars, n.levels, varNames = NULL, scale = TRUE){
@@ -1856,8 +2104,8 @@ gen.BBD <- function(k, n.center = 1){
 ####            generate Exact D-optimal (Borkowski)             ###
 ####################################################################
 Borkowski2003 <- function(criterion, k, N){
-  if(!(k == 2 | k == 3) | !(k%%1==0) | !(criterion == "A" | criterion == "D")){
-    print("This function now provides only exact D- and A- optimal designs for k = 2 and 3")
+  if(!(k == 2 | k == 3) | !(k%%1==0) | !(criterion == "A" | criterion == "D" | criterion == "G"| criterion == "IV")){
+    print("This function now provides only exact D-, A-, G-, and IV-optimal designs for k = 2 and 3")
     stop
   } 
   if(criterion == "D"){
@@ -1953,8 +2201,17 @@ Borkowski2003 <- function(criterion, k, N){
                                 c(1,.0305,-1),c(1,-1,.0193),c(.073,1,-.0417),c(.1205,.0431,1))
         return(D.exact.k3.N15)
       }
-      if((N <= 9) | (N >= 16) | !(N%%1 == 0)){
-        print("Only N = 10 to 15")
+      if(N == 16){
+        D.exact.k3.N16 <- matrix(c(
+          .0513,1,-1,1,1,-.0513,.029,1,1,-1,1,-.029,-.0819,-.0258,-1,1,-.0258,-1,1,-.0258,.0819,-1,-.0426,1
+        ), byrow = TRUE, ncol = 3)
+        D.exact.k3.N16 <- as.data.frame(D.exact.k3.N16)
+        names(D.exact.k3.N16) <- paste("X",1:k,sep="")
+        D.exact.k3.N16 <- rbind(D.exact.k3.N16, gen.CCD(3,0,1)[1:8,])      
+        return(D.exact.k3.N16)
+      }
+      if((N <= 9) | (N >= 17) | !(N%%1 == 0)){
+        print("Only N = 10 to 16")
         stop
       }
     }
@@ -2086,9 +2343,359 @@ Borkowski2003 <- function(criterion, k, N){
         A.exact.k3.N15 = list(Design = A.exact.k3.N15, note = "This is also an exact IV-optimal design")
         return(A.exact.k3.N15)
       }
-      if((N <= 9)  | (N >= 16) | !(N%%1 == 0) ){
-        print("Only N = 10 to 15")
+      if(N == 16){
+        A.exact.k3.N16<- gen.CCD(n.vars = 3, n.center = 0, alpha = 1)
+        A.exact.k3.N16[13,] <- c(0,0,-1); A.exact.k3.N16[14,] <- c(0,0,-1); 
+        A.exact.k3.N16<- rbind(A.exact.k3.N16,c(0,-1,0),c(1,0,0))
+        return(A.exact.k3.N16)
+      }
+      if((N <= 9)  | (N >= 17) | !(N%%1 == 0) ){
+        print("Only N = 10 to 16")
       }
     }
   }
+  if(criterion == "G"){
+    if(k == 2){
+      if(N == 6){
+        a = -.193256; b = .522; c = .864001
+        G.exact.k2.N6 <- matrix(c(-1,-1,a,a,1,b,b,1,c,-1,-1,c), byrow = TRUE, ncol=2)
+        G.exact.k2.N6 <- as.data.frame(G.exact.k2.N6)
+        names(G.exact.k2.N6) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N6)
+      }
+      if(N == 7){
+        a = .937817; b = -.603132; c = .773037; d = -.050674;
+        G.exact.k2.N7 <- matrix(c(1,1,a,-1,-1,a,b,-1,-1,b,c,d,d,c), byrow = TRUE, ncol=2)
+        G.exact.k2.N7 <- as.data.frame(G.exact.k2.N7)
+        names(G.exact.k2.N7) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N7)
+      }
+      if(N == 8){
+        a = .052190; b = .063291; c = .824605;
+        G.exact.k2.N8 <- matrix(c(1,1,1,-1,-1,1,-1,-1,1,-a,-1,a,-b,-c,b,c), byrow = TRUE, ncol=2)
+        G.exact.k2.N8 <- as.data.frame(G.exact.k2.N8)
+        names(G.exact.k2.N8) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N8)
+      }
+      if(N == 9){
+        a = .420229
+        G.exact.k2.N9 <- matrix(c(1,1,1,-1,-1,1,-1,-1,0,0,a,1,-a,-1,1,-a,-1,a), byrow = TRUE, ncol=2)
+        G.exact.k2.N9 <- as.data.frame(G.exact.k2.N9)
+        names(G.exact.k2.N9) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N9)
+      }
+      if(N == 10){
+        a = -.430; b = .564028; c=.176604;
+        G.exact.k2.N10 <- matrix(c(1,1,1,-1,-1,1,-1,-1,0,-1,1,a,-1,a,b,1,-b,1,0,c), byrow = TRUE, ncol=2)
+        G.exact.k2.N10 <- as.data.frame(G.exact.k2.N10)
+        names(G.exact.k2.N10) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N10)
+      }
+      if(N == 11){
+        a = -.561111; b = .158889; c = .819313; d = .000843;
+        G.exact.k2.N11 <- matrix(c(1,1,1,-1,-1,1,-1,-1,-1,-1,1,a,a,1,b,-1,-1,b,c,c,d,d), byrow = TRUE, ncol=2)
+        G.exact.k2.N11 <- as.data.frame(G.exact.k2.N11)
+        names(G.exact.k2.N11) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N11)
+      }
+      if(N == 12){
+        a = -.681289; b = .061178; c = .519483; d = -.035116; e = .895400;
+        G.exact.k2.N12 <- matrix(c(1,-1,-1,1,1,a,a,1,b,-1,-1,b,c,d,d,c,1,e,e,1,-1,-e,-e,-1), byrow = TRUE, ncol=2)
+        G.exact.k2.N12 <- as.data.frame(G.exact.k2.N12)
+        names(G.exact.k2.N12) <- paste("X",1:k,sep="")
+        return(G.exact.k2.N12)
+      }
+      if((N <= 5) | (N >= 13) | !(N%%1 == 0) ){
+        print("Only N = 6 to 12")
+        stop
+      }
+    }
+    if(k == 3){
+      if(N == 10){
+        G.exact.k3.N10 <- matrix(c(
+          -.9998, .4518, .8786,
+          1 ,     1, .3059,
+          1 ,    -1,-.9110,
+          -.8810,    -1, .9900,
+          -1, -.7809, -1  ,
+          .0615,    1  ,   1 ,
+          1 , -.6490,   1 ,
+          -.9558,  1    , -.7944,
+          .7592, .6918, -1,
+          -.0413, -.5508, -.0283
+        ),byrow = TRUE, ncol=3)
+        G.exact.k3.N10 <- as.data.frame(G.exact.k3.N10)
+        names(G.exact.k3.N10) <- paste("X",1:k,sep="")
+        return(G.exact.k3.N10)
+      }
+      if(N == 11){
+        G.exact.k3.N11 <- matrix(c(
+          -.1140, -1, 1,-1,-.1140,1,-1,-1,.1141,-.7550,-.7550,-1,-.7550,1,.7550,1,-.7550,.7550,.1858,.1858
+          ,-.1858,1,-1,-1,1,1,-1,-1,1,-1,1,1,1
+        ),byrow = TRUE, ncol=3)
+        G.exact.k3.N11 <- as.data.frame(G.exact.k3.N11)
+        names(G.exact.k3.N11) <- paste("X",1:k,sep="")
+        return(G.exact.k3.N11)
+      }
+      if(N == 12){
+        G.exact.k3.N12 <- matrix(c(
+          1,-.7188,1,1,-1,-.9960,-1,-1,-.9900,.9930,.9841,.8816,-1,1,-.8898,
+          -1,-.5815,1,-.4144,-1,.9600,-.7357,1,.9983,.9998,1,-.8238,-1,.0100,
+          .0940,.3524,-1,.0469,.0928,.0913,-1
+        ),byrow = TRUE, ncol=3)
+        G.exact.k3.N12 <- as.data.frame(G.exact.k3.N12)
+        names(G.exact.k3.N12) <- paste("X",1:k,sep="")
+        return(G.exact.k3.N12)
+      }
+      if(N == 13){
+        G.exact.k3.N13 <- matrix(c(
+          .3938,-1,-1,1,-.3938,-1,1,-1,-.3938,-1,0,0,0,1,0,0,0,1,1,-1,1,1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,
+          -1,1,-1,-1,1,1
+        ),byrow = TRUE, ncol=3)
+        G.exact.k3.N13 <- as.data.frame(G.exact.k3.N13)
+        names(G.exact.k3.N13) <- paste("X",1:k,sep="")
+        return(G.exact.k3.N13)
+      }
+      if(N == 14){
+        G.exact.k3.N14 <-  gen.CCD(3, n.center=0, alpha=1)
+        G.exact.k3.N14 <- as.data.frame(G.exact.k3.N14)
+        return(G.exact.k3.N14)
+      }
+      if(N == 15){
+        G.exact.k3.N15 <-  gen.CCD(3, n.center=0, alpha=1)
+        G.exact.k3.N15 <- as.data.frame(rbind(G.exact.k3.N15,c(1,-1,-1)))
+        return(G.exact.k3.N15)
+      }
+      if(N == 16){
+        G.exact.k3.N16 <-  gen.CCD(3, n.center=0, alpha=1)[-c(13,14),]
+        G.exact.k3.N16 <- rbind(G.exact.k3.N16,c(0,0,-1),c(0,0,-1),c(0,1,0),c(1,0,0))
+        return(G.exact.k3.N16)
+      }
+      if((N <= 9)  | (N >= 17) | !(N%%1 == 0) ){
+        print("Only N = 10 to 16")
+      }
+    }
+  }
+  if(criterion == "IV"){
+    if(k == 2){
+      if(N == 6){
+        a = .707479; b = .276367; c = .144868;
+        IV.exact.k2.N6 <- matrix(c(-1,1,a,1,-1,-a,1,-b,b,-1,-c,c), byrow = TRUE, ncol=2)
+        IV.exact.k2.N6 <- as.data.frame(IV.exact.k2.N6)
+        names(IV.exact.k2.N6) <- paste("X",1:k,sep="")
+        return(IV.exact.k2.N6)
+      }
+      if(N == 7){
+        a = .310497; b = .796856; c = .147869;
+        IV.exact.k2.N7 <- matrix(c(1,-1,-1,a,-a,1,1,b,-b,-1,c,-c,c,-c), byrow = TRUE, ncol=2)
+        IV.exact.k2.N7 <- as.data.frame(IV.exact.k2.N7)
+        names(IV.exact.k2.N7) <- paste("X",1:k,sep="")
+        return(IV.exact.k2.N7)
+      }
+      if(N == 8){
+        a = .003859; b = .768301;  c = .094936;
+        IV.exact.k2.N8 <- matrix(c(1,-1,-1,1,-1,-a,a,1,1,b,-b,-1,c,-c,c,-c), byrow = TRUE, ncol=2)
+        IV.exact.k2.N8 <- as.data.frame(IV.exact.k2.N8)
+        names(IV.exact.k2.N8) <- paste("X",1:k,sep="")
+        return(IV.exact.k2.N8)
+      }
+      if(N == 9){
+        a = .044158; b = .836727; c = .044687;
+        IV.exact.k2.N9 <- matrix(c(-1,1,-1,-1,-1,0,a,1,a,-1,1,b,1,-b,c,0,c,0), byrow = TRUE, ncol=2)
+        IV.exact.k2.N9 <- as.data.frame(IV.exact.k2.N9)
+        names(IV.exact.k2.N9) <- paste("X",1:k,sep="")
+        return(IV.exact.k2.N9)
+      }
+      if(N == 10){
+        IV.exact.k2.N10 <- data.frame(X1=c(-1,-1, 1, 1,0,0,1,-1,0,0),
+                                      X2=c(-1, 1,-1, 1,1,-1,0,0,0,0))
+        return(IV.exact.k2.N10)
+      }
+      if(N == 11){
+        IV.exact.k2.N11 <- data.frame(X1=c(-1,-1, 1, 1,0,0,1,-1,0,0,0),
+                                      X2=c(-1, 1,-1, 1,1,-1,0,0,0,0,0))
+        return(IV.exact.k2.N11)
+      }
+      if(N == 12){
+        IV.exact.k2.N12 <- matrix(c(-1,-1,-1,1,1,-1,1,1,0,1,0,-1,1,0,-1,0,0,0,0,0,0,0,0,0), byrow = TRUE, ncol=2)
+        IV.exact.k2.N12 <- as.data.frame(IV.exact.k2.N12)
+        names(IV.exact.k2.N12) <- paste("X",1:k,sep="")
+        return(IV.exact.k2.N12)
+      }
+      if((N <= 5) | (N >= 13) | !(N%%1 == 0) ){
+        print("Only N = 6 to 12")
+        stop
+      }
+    }
+    if(k == 3){
+      if(N == 10){
+        IV.exact.k3.N10 <- matrix(c(
+          -.9605,-.1025,-.1025,.1025,.9605,-.1025,.1025,-.1025,.9605,-.2553,-1,-1,1,.2553,-1
+          ,1,-1,.2553,-1,1,1,1,1,1,-1,1,-1,-1,-1,1
+        ),byrow = TRUE, ncol=3)
+        IV.exact.k3.N10 <- as.data.frame(IV.exact.k3.N10)
+        names(IV.exact.k3.N10) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N10)
+      }
+      if(N == 11){
+        IV.exact.k3.N11 <- matrix(c(
+          -.0589,.0589,-.0589,-1,-.1905,.1905,.1905,1,.1905,.1905,-.1905,-1,-.2349,-1,1,1,.2349,1,1,-1,-.2349,
+          -1,-1,-1,-1,1,-1,-1,1,1,1,1,-1
+        ),byrow = TRUE, ncol=3)
+        IV.exact.k3.N11 <- as.data.frame(IV.exact.k3.N11)
+        names(IV.exact.k3.N11) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N11)
+      }
+      if(N == 12){
+        a = .0925; b = .3120; c = .1685;
+        IV.exact.k3.N12 <- matrix(c(
+          -a,-a,a,-a,-a,a,-1,b,-b,b,-1,-b,b,b,1,-c,1,-1,1,-c,-1,1,1,c,-1,-1,1,1,-1,1,-1,-1,-1,-1,1,1
+        ),byrow = TRUE, ncol=3)
+        IV.exact.k3.N12 <- as.data.frame(IV.exact.k3.N12)
+        names(IV.exact.k3.N12) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N12)
+      }
+      if(N == 13){
+        a = .0537; b = .1243; c = .6353; d = .2472;
+        IV.exact.k3.N13 <- matrix(c(
+          0,-a,0,0,-a,0,-b,1,1,b,1,-1,1,-c,-1,-1,-c,1,1,d,1,-1,d,-1,1,1,-b,-1,1,b,0,-1,0,-1,-1,-1,1,-1,1
+        ),byrow = TRUE, ncol=3)
+        IV.exact.k3.N13 <- as.data.frame(IV.exact.k3.N13)
+        names(IV.exact.k3.N13) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N13)
+      }
+      if(N == 14){
+        IV.exact.k3.N14 <- matrix(c(
+          -.8052,1,1,-.5653,-1,-1,-1,-.1528,1,-1,-1,.0475,.3061,-1,1,1,-1,-.7339,1,.8613,1,-1,.9168,-1,1,1,-1,1,-.1531,.1993,-.0174,1,.0152
+          ,.0524,-.0482,-1,-.0240,.0628,-.0056,-.0240,.0628,-.0056       
+        ),byrow = TRUE, ncol=3)
+        IV.exact.k3.N14 <- as.data.frame(IV.exact.k3.N14)
+        names(IV.exact.k3.N14) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N14)
+      }
+      if(N == 15){
+        IV.exact.k3.N15 <- gen.CCD(3,1,1)[-c(13,14),]
+        IV.exact.k3.N15 <- rbind(IV.exact.k3.N15,c(0,0,-1),c(0,0,-1))
+        names(IV.exact.k3.N15) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N15)
+      }
+      if(N == 16){
+        IV.exact.k3.N16 <- gen.CCD(3,2,1)[-c(13,14),]
+        IV.exact.k3.N16 <- rbind(IV.exact.k3.N16,c(0,0,-1),c(0,0,-1))
+        names(IV.exact.k3.N16) <- paste("X",1:k,sep="")
+        return(IV.exact.k3.N16)
+      }
+      if((N <= 9)  | (N >= 17) | !(N%%1 == 0) ){
+        print("Only N = 10 to 16")
+      }
+    }
+  }
+}
+
+################# Contour plots ####################
+
+spvcontour <- function(design.matrix, shape, max.radius = sqrt(2), length = 100, nlevels = 10,
+                        title = "Contour of SPVs"){
+  norm2 <- function(x){return(sqrt(sum(x^2)))}
+  shuffle.fun <- function(row.vec){
+    num.var <- length(row.vec)
+    row.vec[shuffle(num.var)]
+  }
+  n.var <- ncol(design.matrix)
+  if(!(n.var == 2)){
+    return(print("The contour plot is only 2-factor design"))
+  } 
+  if( (shape == "circle") && !is.na(max.radius) ){
+    design.matrix<- as.data.frame(matrix(as.numeric(paste(unlist(design.matrix))),byrow=FALSE,ncol=n.var))  
+    N.generated <- 150*n.var*(2^(n.var))
+    model.X <- model.matrix( ~quad(.) , design.matrix)
+    nrow <- nrow(model.X)
+    ncol <- ncol(model.X)
+    M.inv<- nrow*solve(t(model.X)%*%model.X)
+    
+    N.of.pts.gen <- 10*N.generated
+    set.seed(1972264)
+    
+    Urand<- runif(n=(10*n.var*N.generated),min=-max.radius,max=max.radius)
+    Urand <- ifelse(Urand < (-max.radius+.01), -max.radius, Urand)
+    Urand <- ifelse(Urand > ( max.radius-.01),  max.radius, Urand)
+    Urand <- ifelse(-.01 < Urand & Urand < .01 ,  0, Urand)  
+    
+    rand.sphere.2times <- matrix(Urand ,byrow= TRUE, ncol=n.var)
+    norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
+    norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var) 
+    
+    Urand.2 <- runif(n = N.of.pts.gen, min = 0, max = max.radius)
+    Urand.2 <- ifelse(Urand.2 < .001, 0, Urand.2)
+    Urand.2 <- ifelse(Urand.2 > ( max.radius-.001),  max.radius, Urand.2)
+    radius.random  <- Urand.2
+    
+    Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
+    pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
+    
+    Var.pred.random<- numeric(N.of.pts.gen)
+    for(kk in 1:N.of.pts.gen){
+      each.obs <- as.vector(pred.model.random[kk, ])
+      Var.pred.random[kk] <- as.numeric(t(each.obs)%*%M.inv%*%each.obs)
+    }
+    par(mfrow=c(1,1),
+        mai = c(0.75, 0.75, 0.75, 0.375),
+        omi = c(0.075, 0.0375, 0.0375, 0.0375),
+        mgp = c(2, 1, 0),
+        xpd = FALSE)
+    contour(akima::interp(Surface.pts.random$V1, Surface.pts.random$V2, Var.pred.random, duplicate = "mean",
+                   xo=seq(min(Surface.pts.random$V1), max(Surface.pts.random$V1), length = length),
+                   yo=seq(min(Surface.pts.random$V2), max(Surface.pts.random$V2), length = length),
+                   linear = TRUE, extrap=FALSE), nlevels = nlevels, labcex = 1, col="black",main = title)
+    r=max.radius
+    nseg=360
+    x.cent <- 0
+    y.cent <- 0
+    
+    xx <- x.cent + r*cos( seq(0,2*pi, length.out=nseg) )
+    yy <- y.cent + r*sin( seq(0,2*pi, length.out=nseg) )   
+    lines(xx,yy, col='red')
+    points(design.matrix, pch = 19, cex = 1.5)
+  }else{
+    if( (shape == "square")){
+      N.generated <- 15000
+      model.X <- model.matrix( ~quad(.) , design.matrix)
+      nrow <- nrow(model.X)
+      ncol <- ncol(model.X)
+      M.inv<- nrow*solve(t(model.X)%*%model.X)
+      
+      Urand <- runif(n = N.generated*n.var, min = -1, max = 1)
+      Urand <- ifelse(Urand < (-1+.01), -1, Urand)
+      Urand <- ifelse(Urand > ( 1-.01),  1, Urand)
+      Urand <- ifelse(Urand > -.01 & Urand < .01,  0, Urand)
+      
+      Cuboidal.pts.random  <- matrix(Urand, byrow = TRUE, ncol = n.var)      
+      Cuboidal.pts.random  <- as.data.frame(Cuboidal.pts.random)
+      pred.model.random  <- model.matrix( ~quad(.), Cuboidal.pts.random)
+      radius.random<- apply(Cuboidal.pts.random, MARGIN = 1, norm2)
+      
+      size.pred.rand <- dim(pred.model.random)[1]
+      Var.pred.random <- numeric(size.pred.rand)
+      for(kk in 1:size.pred.rand){
+        each.obs <- as.vector(pred.model.random[kk, ])
+        Var.pred.random[kk] <- as.numeric(t(each.obs)%*%M.inv%*%each.obs)
+      }
+      par(mfrow=c(1,1),
+          mai = c(0.75, 0.75, 0.75, 0.375),
+          omi = c(0.075, 0.0375, 0.0375, 0.0375),
+          mgp = c(2, 1, 0),
+          xpd = FALSE)
+      contour(akima::interp(Cuboidal.pts.random$V1, Cuboidal.pts.random$V2, Var.pred.random, duplicate = "mean",
+                     xo=seq(min(Cuboidal.pts.random$V1), max(Cuboidal.pts.random$V1), length = length),
+                     yo=seq(min(Cuboidal.pts.random$V2), max(Cuboidal.pts.random$V2), length = length),
+                     linear = TRUE, extrap=FALSE), nlevels = nlevels, labcex = 1,main = title)
+      points(design.matrix, pch = 19, cex = 1.5)
+      
+      segments(-1, -1, -1, 1, col = "red")
+      segments(-1,  1,  1, 1, col = "red")
+      segments( 1,  1,  1, -1, col = "red")
+      segments( 1, -1, -1, -1, col = "red")
+      
+    }else{ return(print("Arguments are not valid"))}
+  }  
 }
