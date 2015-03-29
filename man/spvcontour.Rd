@@ -21,9 +21,9 @@
     The radius of a circle.
   }
   \item{length}{
-    Argument from interp from library \code{akima}.}
+    Argument from the interp fucntion in library \code{akima}.}
   \item{nlevels}{
-    Argument from interp from library \code{akima}.}
+    Argument from the interp fucntion in library \code{akima}.}
     \item{title}{
     The title of a contour plot.}
 }

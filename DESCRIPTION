@@ -1,18 +1,17 @@
 Package: VdgRsm
-Type: Package
-Title: Variance Dispersion, Fraction of Design Space Plots, Designs,
-        and Contour Plots
-Version: 1.4
-Date: 2015-02-01
+Version: 1.5
+Date: 2015-03-29
+Title: Plots of Scaled Prediction Variances for Response Surface
+        Designs
 Author: Patchanok Srisuradetchai, John J. Borkowski
 Maintainer: Patchanok Srisuradetchai <s.patchanok@gmail.com>
 Depends: R (>= 3.1.2)
 Imports: permute, AlgDesign
 Suggests: akima
-Description: This package creates variance dispersion graphs (VDGs), fraction of design space (FDS) plots, and contour of SPVs for second-order model designs in spherical or cuboidal regions. The package also generates some response surface designs.
+Description: Functions for creating variance dispersion graphs, fraction of design space plots, and contour plots of scaled prediction variances for second-order response surface designs in spherical and cuboidal regions. Also, some standard response surface designs can be generated.
 License: GPL (>= 2)
 LazyLoad: yes
 NeedsCompilation: no
 Repository: CRAN
-Packaged: 2015-02-01 07:25:03 UTC; Patchanok
-Date/Publication: 2015-02-01 09:04:55
+Packaged: 2015-03-29 22:51:44 UTC; Patchanok
+Date/Publication: 2015-03-30 07:36:28

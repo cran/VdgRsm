@@ -14,7 +14,7 @@
     The number of factors or independent variables, k = 2, 3, 4, 5, 6, and 7.
   }
   \item{alpha}{
-    Axial distance. User may specify "rotatanble", "face-center", or other numeric numbers. See examples.
+    Axial distance. User may specify "rotatable", "face-center", or other numeric numbers. See examples.
     }
       \item{n.center}{
     The number of center points

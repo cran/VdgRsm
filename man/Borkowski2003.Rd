@@ -21,7 +21,7 @@
     }
 }
 \value{
-  \code{Borkowski2003} is called to generate the data frame of the design matrix of the optimal designs.
+  \code{Borkowski2003} is called to generate the data frame of the design matrix of exact optimal designs.
 }
 \examples{
   Borkowski2003("D", 2, 10)

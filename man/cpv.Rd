@@ -4,7 +4,7 @@
 Cuboidal Prediction Variance
 }
 \description{
-Create a Variance Dispesion Graph for a response surface design in a cuboidal region.
+Create a variance dispersion graph for a response surface design in a cuboidal region.
 }
 \usage{
 cpv(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1","Design 2"),
@@ -21,7 +21,7 @@ cpv(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1","Design 2"),
 }
 
 \value{
-  \code{cpv} is called to generate a Variance Dispersion Graph when the number of factors k =  2, 3, or 4 and to generate side-by-side boxplots for k = 5 and 6. In the former case, a table of the minimum, maximum, and average of scaled prediction variances is also produced. 
+  \code{cpv} is called to generate a variance sispersion graph when the number of factors k =  2, 3, or 4 and to generate side-by-side boxplots for k = 5 and 6. In the former case, a table of the minimum, maximum, and average of scaled prediction variances is also produced. 
 }
 \examples{
 CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)

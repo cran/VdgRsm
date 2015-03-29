@@ -4,12 +4,12 @@
 Spherical Prediction Variance
 }
 \description{
-Create Variance Dispesion Graphs (VDGs) for response surface designs in spherical regions.
+Create variance dispesion graphs (VDGs) for response surface designs in spherical regions.
 }
 \usage{
 spv(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
     des.names = c("Design 1","Design 2","Design 3"),  
-    scale = TRUE, add.pts = TRUE)
+    scale = TRUE, add.pts = TRUE, label = "ON")
 }
 
 \arguments{
@@ -22,10 +22,12 @@ spv(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   Design points are scaled by a factor equal to the square root of the number of factors divided by the maximum of radii across the set of design points. This factor makes two or more designs comparable by scaling the maximum design point radius to be the square root of the number of factors.
 }
 \item{add.pts}{
-  Generate scaled prediction variances of random design points in the VDG. By default \code{add.pts = TRUE}}.
+  Generate scaled prediction variances of random design points in the VDG. By default \code{add.pts = TRUE}.}
+\item{label}{
+  The default is "ON" meaning that all legends will be appeared, and if it is "OFF", legends will be removed.}
 }
 \value{
-  \code{spv} is called to generate the Variance Dispersion Graph(s) and a table of the minimum, maximum, and average of scaled prediction variances for each design.
+  \code{spv} is called to generate the Variance Dispersion Graph(s) and a table of the minimum, maximum, and average of scaled prediction variances.
 }
 \examples{
 CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)

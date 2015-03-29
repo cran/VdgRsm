@@ -4,7 +4,7 @@
    Box-Behnken Designs (BBDs)
 }
 \description{
-  Generate Box-Behnken Designs for k = 3 to 7
+  Generate Box-Behnken designs for k = 3 to 7
 }
 \usage{
   gen.BBD(k, n.center = 1)

@@ -2,16 +2,15 @@
 \alias{VdgRsm}
 \docType{package}
 \title{
-Variance Dispersion, Fraction of Design Space Plots, Designs, and Contour Plots
+Plots of Scaled Prediction Variances for Response Surface Designs
 }
 \description{
-This package creates variance dispersion graphs (VDGs), fraction of design space (FDS) plots, and contour of SPVs for second-order model designs in spherical or cuboidal regions. The package also generates some response surface designs.
-}
+Functions for creating variance dispersion graphs, fraction of design space plots, and contour plots of scaled prediction variances for second-order response surface designs in spherical and cuboidal regions. Also, some standard response surface designs can be generated.}
 \details{\tabular{ll}{
 Package: \tab VdgRsm\cr
 Type: \tab Package\cr
-Version: \tab 1.4\cr
-Date: \tab 2015-02-01\cr
+Version: \tab 1.5\cr
+Date: \tab 2015-03-29\cr
 License: \tab GPL-2
 }}
 \author{

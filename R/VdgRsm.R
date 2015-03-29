@@ -2,7 +2,7 @@
 
 spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
                   des.names = c("Design 1","Design 2","Design 3"),
-                  scale = TRUE, add.pts = TRUE){  
+                  scale = TRUE, add.pts = TRUE, label = "ON"){  
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
     num.var <- length(row.vec)
@@ -21,7 +21,7 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   }
   
   design.matrix<- as.data.frame(matrix(as.numeric(paste(unlist(design.matrix))),byrow=FALSE,ncol=n.var))  
-  N.generated <- 25*n.var*(2^(n.var))
+  N.generated <- 15^n.var   # CHANGE  !!!
   model.X <- model.matrix( ~quad(.) , design.matrix)
   nrow <- nrow(model.X)
   ncol <- ncol(model.X)
@@ -79,21 +79,21 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
   
   
   # Generate points on a sphere
-  set.seed(1972264)
-  
-  Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-  Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
-  Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
-  Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+  #set.seed(1972264)
+  #n.var=2; N.generated=1000;
+  Urand <- rnorm(n=(n.var*N.generated),mean = 0, sd = 1)
+  #Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+  #Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+  # Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
   
   rand.sphere <- matrix(Urand,byrow= TRUE, ncol=n.var)
   radius <- seq(from = 0, to = sqrt(n.var), length.out = n.grid)
   norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)
   norm2.rand.rep <- matrix(rep(norm2.rand, each = n.var),byrow= TRUE, ncol=n.var)
-  
   gen.array <- array(rand.sphere/norm2.rand.rep,dim = c(N.generated,n.var,n.grid))
   Array.with.R <- rep(radius,each = (N.generated*n.var))*gen.array
   
+  #plot(as.data.frame(Array.with.R[,,15]), pch = ".")
   
   for(ii in 1:n.grid){
     pred.model  <- model.matrix( ~quad(.), as.data.frame(Array.with.R[,,ii]))
@@ -168,19 +168,29 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
       omi = c(0.075, 0.0375, 0.0375, 0.0375),
       mgp = c(2, 1, 0),
       xpd = FALSE)
-  plot(Matrix.V[,1],Matrix.V[,2], type = "l", lwd = 2, lty = 1, 
-       ylim = c(lim.min-4, lim.max + 12), col = "#2E2E2E",
-       xlab = "Radius", 
-       ylab = "Scaled Variance",
-       panel.first = grid())
-  lines(Matrix.V[,1],Matrix.V[,3], lwd = 2, col = "#2E2E2E", lty = 6)
-  lines(Matrix.V[,1],Matrix.V[,4], lwd = 2, col = "#2E2E2E", lty = 3)
   
-  
-  legend(x = 0, y = lim.max + 13,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
-         lwd=c(2,2,2),col=c(1,1,1),
-         inset = 0.05, bg="transparent", bty = "n")
-  
+  if(label == "OFF"){
+    plot(Matrix.V[,1],Matrix.V[,2], type = "l", lwd = 2, lty = 1, 
+         ylim = c(lim.min-3, lim.max + 3), col = "#2E2E2E",
+         xlab = "Radius", 
+         ylab = "Scaled Variance",
+         panel.first = grid())
+    lines(Matrix.V[,1],Matrix.V[,3], lwd = 2, col = "#2E2E2E", lty = 6)
+    lines(Matrix.V[,1],Matrix.V[,4], lwd = 2, col = "#2E2E2E", lty = 3)
+  }
+  if(label == "ON"){
+    plot(Matrix.V[,1],Matrix.V[,2], type = "l", lwd = 2, lty = 1, 
+         ylim = c(lim.min-4, lim.max + 6), col = "#2E2E2E",
+         xlab = "Radius", 
+         ylab = "Scaled Variance",
+         panel.first = grid())
+    lines(Matrix.V[,1],Matrix.V[,3], lwd = 2, col = "#2E2E2E", lty = 6)
+    lines(Matrix.V[,1],Matrix.V[,4], lwd = 2, col = "#2E2E2E", lty = 3)
+    legend(x = 0, y = lim.max + 6,  legend = c("Max","Avg","Min"),lty=c(1,3,6),
+           lwd=c(2,2,2),col=c(1,1,1),
+           inset = 0.05, bg="transparent", bty = "n")
+  }
+  #help(legend)
   # Design 2
   if(!is.null(design.matrix.2)){
     lines(Matrix.V.2[,1],Matrix.V.2[,2], lwd = 2, col = "#EE4000", lty = 1)
@@ -194,75 +204,85 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
     lines(Matrix.V.3[,1],Matrix.V.3[,4], lwd = 2, col = "#3A5FCD", lty = 3)
   }
   
-  # Put legend Design names
-  if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0.6, y = lim.max + 13,  
-           legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
-           lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
-           inset = 0.05, bg="transparent", bty = "n")
-  }else{
-    if(!is.null(design.matrix.2)){
-      legend(x = 0.6, y = lim.max + 13,  
-             legend = c(des.names[1],des.names[2]),lty=c(1,1),
-             lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
+  if(label == "ON"){
+    # Put legend Design names
+    if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
+      legend(x = 0.6, y = lim.max + 6,  
+             legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
+             lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0.6, y = lim.max + 13,  
-             legend = c(des.names[1]),lty=c(1),
-             lwd=c(2),col=c("#2E2E2E"),
-             inset = 0.05, bg="transparent", bty = "n")
-      
-    }}
+      if(!is.null(design.matrix.2)){
+        legend(x = 0.6, y = lim.max + 6,  
+               legend = c(des.names[1],des.names[2]),lty=c(1,1),
+               lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
+               inset = 0.05, bg="transparent", bty = "n")
+      }else{
+        legend(x = 0.6, y = lim.max + 6,  
+               legend = c(des.names[1]),lty=c(1),
+               lwd=c(2),col=c("#2E2E2E"),
+               inset = 0.05, bg="transparent", bty = "n")
+        
+      }}
+    
+    # abline
+    abline(h = ncol, col = "#8B8682",  lwd = 1)
+    text(sqrt(n.var)-0.15, lim.min -3 , paste("p =",ncol),col = "#8B8682")
+  }
   
-  # abline
-  abline(h = ncol, col = "#8B8682",  lwd = 1)
-  text(sqrt(n.var)-0.15, lim.min -3 , paste("p =",ncol),col = "#8B8682")
   
   if(add.pts == TRUE){
     # Filling points within max and min
     
     if(n.var <= 4){
-      N.of.pts.gen <- 4*N.generated
+      N.of.pts.gen <- N.generated
       set.seed(1972264)
-      
-      Urand2 <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-      Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
-      Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
-      Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
+      #help(rnorm)
+      Urand2 <- rnorm(n=(n.var*N.generated), mean = 0, sd = 1 )        
+      #Urand2 <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+      ##Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
+      #Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+      #Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
       
       rand.sphere.2times <- matrix(Urand2,byrow= TRUE, ncol=n.var)
       norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
       norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
       
-      Urand3 <- runif(n = 4*N.generated, min = 0, max = sqrt(n.var))
-      Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
-      Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)
+      Urand3 <-      runif(n = N.generated, min = 0, max = 1)
+      radius.random    <- sqrt(n.var)*Urand3^(1/n.var)
       
-      radius.random      <- Urand3
+      #Urand3 <- runif(n = 4*N.generated, min = 0, max = sqrt(n.var))
+      #Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
+      #Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)  
+      #radius.random      <- Urand3
       Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
       pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
       
     }
     
     if(n.var > 4){
-      N.of.pts.gen <- 2*N.generated
+      N.of.pts.gen <- N.generated
       set.seed(1972264)
       
-      Urand2 <- runif(n=(2*n.var*N.generated), min=-sqrt(n.var),max=sqrt(n.var))
-      Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
-      Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
-      Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
+      Urand2 <- rnorm(n=(n.var*N.generated), mean = 0, sd = 1 )        
+      #Urand2 <- runif(n=(2*n.var*N.generated), min=-sqrt(n.var),max=sqrt(n.var))
+      #Urand2 <- ifelse(Urand2 < (-sqrt(n.var)+.001), -sqrt(n.var), Urand2)
+      #Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+      #Urand2 <- ifelse(Urand2 > -.001 & Urand2 < .001,  0, Urand2)
       
       
-      rand.sphere.2times <- matrix(c(),byrow= TRUE, ncol=n.var)
+      rand.sphere.2times <- matrix(Urand2,byrow= TRUE, ncol=n.var)
       norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
       norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var)   
       
-      Urand3 <- runif(n = 2*N.generated, min = 0, max = sqrt(n.var))
-      Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
-      Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)
+      #Urand3 <- runif(n = 2*N.generated, min = 0, max = sqrt(n.var))
+      #Urand3 <- ifelse(Urand3 < .001, 0, Urand3)
+      #Urand3 <- ifelse(Urand3 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand3)
+      #radius.random      <- Urand3 
       
-      radius.random      <- Urand3      
+      Urand3 <-  runif(n = N.generated, min = 0, max = 1)
+      radius.random  <- sqrt(n.var)*Urand3^(1/n.var)
+      
       Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
       pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
     }
@@ -312,9 +332,10 @@ spv <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 
 ######################### fds.sphere function  ########################
 
+
 fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
                          des.names = c("Design 1","Design 2","Design 3"),
-                         scale = TRUE){
+                         scale = TRUE, label = "ON"){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -334,7 +355,7 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   }
   
   design.matrix<- as.data.frame(matrix(as.numeric(paste(unlist(design.matrix))),byrow=FALSE,ncol=n.var))  
-  N.generated <- 70*n.var*(2^(n.var))
+  N.generated <- 60^n.var
   model.X <- model.matrix( ~quad(.) , design.matrix)
   nrow <- nrow(model.X)
   ncol <- ncol(model.X)
@@ -379,45 +400,51 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   # Filling points within max and min
   
   if(n.var <= 4){
-    N.of.pts.gen <- 4*N.generated
-    set.seed(1972264)
+    N.of.pts.gen <- N.generated
+    # set.seed(1972264)
     
-    Urand <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    Urand <- rnorm(n=(n.var*N.generated), mean = 0, sd = 1)
+    #Urand <- runif(n=(4*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    #Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
     
     rand.sphere.2times <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
     norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var) 
     
-    Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
-    Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
-    Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    #Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    #Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
+    #Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    Urand2 <-      runif(n = N.of.pts.gen, min = 0, max = 1)
+    radius.random      <- sqrt(n.var)*Urand2^(1/n.var)
     
-    radius.random      <- Urand2
+    #radius.random      <- Urand2
     Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
     pred.model.random  <- model.matrix( ~quad(.), Surface.pts.random)
   }
   
   if(n.var > 4){
-    N.of.pts.gen <- 3*N.generated
+    N.of.pts.gen <- N.generated
     set.seed(1972264)
     
-    Urand <- runif(n=(3*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    Urand <- rnorm(n=(n.var*N.generated), mean = 0, sd = 1)
+    #Urand <- runif(n=(3*n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    #Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
     
     rand.sphere.2times <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand.2times <- apply(rand.sphere.2times, MARGIN = 1, norm2)
     norm2.rand.rep.2times <- matrix(rep(norm2.rand.2times, each = n.var),byrow= TRUE, ncol=n.var) 
     
-    Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
-    Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
-    Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    #Urand2 <- runif(n = N.of.pts.gen, min = 0, max = sqrt(n.var))
+    #Urand2 <- ifelse(Urand2 < .001, 0, Urand2)
+    #Urand2 <- ifelse(Urand2 > ( sqrt(n.var)-.001),  sqrt(n.var), Urand2)
+    Urand2 <-      runif(n = N.of.pts.gen, min = 0, max = 1)
+    radius.random      <- sqrt(n.var)*Urand2^(1/n.var)
     
-    radius.random      <-  Urand2
+    #radius.random      <-  Urand2
     Surface.pts.random <- radius.random*as.data.frame(rand.sphere.2times/norm2.rand.rep.2times)
     pred.model.random  <- model.matrix( ~ quad(.), Surface.pts.random)
   }
@@ -473,53 +500,79 @@ fds.sphere <- function(design.matrix, design.matrix.2 = NULL, design.matrix.3 = 
   #    mgp = c(2, 1, 0),
   #    xpd = FALSE)
   par(mfrow=c(1,1),
-      mai = c(0.75, 0.75, 0.75, 0.375),
+      mai = c(0.85, 0.75, 0.75, 0.375),
       omi = c(0.075, 0.0375, 0.0375, 0.0375),
       mgp = c(2, 1, 0),
       xpd = FALSE)
-  
+  #   par(mfrow=c(1,1),
+  #       mai = c(0.75, 0.75, 0.75, 0.375),
+  #       omi = c(0.075, 0.0375, 0.0375, 0.0375),
+  #       mgp = c(2, 1, 0),
+  #       xpd = FALSE)
   # Make FDS plots
-  plot(seq(0, 1, 0.01),quantile(Var.pred.random, probs = seq(0, 1, 0.01), type = 4),
-       type = "l",lwd = 2, col = "#2E2E2E",
-       xlab = "Fraction of design space",ylab = "Scaled Variance",
-       ylim = c(lim.min-4, lim.max + 12), panel.first = grid())
   
-  # Make FDS plots for Design 2
-  if(!is.null(design.matrix.2)){
-    lines(seq(0, 1, 0.01),quantile(Var.pred.random.2, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#EE4000")
-  }
-  # Make FDS plots for Design 3
-  if(!is.null(design.matrix.3)){
-    lines(seq(0, 1, 0.01),quantile(Var.pred.random.3, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#3A5FCD")
-  }
-  
-  # Put legend in VDG plots
-  if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
-    legend(x = 0, y = lim.max + 12,  
-           legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
-           lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
-           inset = 0.05, bg="transparent", bty = "n")
-  }else{
+  if(label == "ON"){
+    plot(seq(0, 1, 0.01),quantile(Var.pred.random, probs = seq(0, 1, 0.01), type = 4),
+         type = "l",lwd = 2, col = "#2E2E2E",
+         xlab = "Fraction of design space",ylab = "Scaled Variance",
+         ylim = c(lim.min-4, lim.max + 6), panel.first = grid())
+    
+    # Make FDS plots for Design 2
     if(!is.null(design.matrix.2)){
-      legend(x = 0, y = lim.max + 12,  
-             legend = c(des.names[1],des.names[2]),lty=c(1,1),
-             lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
+      lines(seq(0, 1, 0.01),quantile(Var.pred.random.2, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#EE4000")
+    }
+    # Make FDS plots for Design 3
+    if(!is.null(design.matrix.3)){
+      lines(seq(0, 1, 0.01),quantile(Var.pred.random.3, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#3A5FCD")
+    }
+    
+    # Put legend in VDG plots
+    if(!is.null(design.matrix.2) && !is.null(design.matrix.3)){
+      legend(x = 0, y = lim.max + 6,  
+             legend = c(des.names[1],des.names[2],des.names[3]),lty=c(1,1,1),
+             lwd=c(2,2,2),col=c("#2E2E2E","#EE4000","#3A5FCD"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0, y = lim.max + 12,  
-             legend = c(des.names[1]),lty=c(1),
-             lwd=c(2),col=c("#2E2E2E"),
-             inset = 0.05, bg="transparent", bty = "n")
-    }}
+      if(!is.null(design.matrix.2)){
+        legend(x = 0, y = lim.max + 6,  
+               legend = c(des.names[1],des.names[2]),lty=c(1,1),
+               lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
+               inset = 0.05, bg="transparent", bty = "n")
+      }else{
+        legend(x = 0, y = lim.max + 6,  
+               legend = c(des.names[1]),lty=c(1),
+               lwd=c(2),col=c("#2E2E2E"),
+               inset = 0.05, bg="transparent", bty = "n")
+      }} 
+  }
+  
+  if(label == "OFF"){
+    plot(seq(0, 1, 0.01),quantile(Var.pred.random, probs = seq(0, 1, 0.01), type = 4),
+         type = "l",lwd = 2, col = "#2E2E2E",
+         xlab = "Fraction of design space",ylab = "Scaled Variance",
+         ylim = c(lim.min-3, lim.max + 3), panel.first = grid())
+    
+    # Make FDS plots for Design 2
+    if(!is.null(design.matrix.2)){
+      lines(seq(0, 1, 0.01),quantile(Var.pred.random.2, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#EE4000")
+    }
+    # Make FDS plots for Design 3
+    if(!is.null(design.matrix.3)){
+      lines(seq(0, 1, 0.01),quantile(Var.pred.random.3, probs = seq(0, 1, 0.01), type = 4), lwd = 2, col = "#3A5FCD")
+    }
+  }
+  
+  
+  
   # abline
   abline(h = ncol, col = "#8B8682",  lwd = 1)
   text(sqrt(n.var)-0.15, lim.min -3 , paste("p =",ncol),col = "#8B8682")
+  
 }
-
 
 #########################  cpv function ####################
 
-cpv <- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1","Design 2"), add.pts = TRUE){
+cpv<- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1","Design 2"), add.pts = TRUE){
   
   norm2 <- function(x){return(sqrt(sum(x^2)))}
   shuffle.fun <- function(row.vec){
@@ -585,10 +638,11 @@ cpv <- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1",
     # Generate points on a sphere
     set.seed(1234567)
     
-    Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    Urand <- rnorm(n=(n.var*N.generated),mean = 0, sd = 1)
+    #Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    #Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
     
     rand.sphere <- matrix(Urand,byrow= TRUE, ncol=n.var)
     norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)
@@ -759,12 +813,12 @@ cpv <- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1",
     
     # Put designs' name
     if(!is.null(design.matrix.2)){
-      legend(x = 0.6, y = lim.max + 13,  
+      legend(x = 0.4, y = lim.max + 13,  
              legend = c(des.names[1],des.names[2]),lty=c(1,1),
              lwd=c(2,2),col=c("#2E2E2E","#EE4000"),
              inset = 0.05, bg="transparent", bty = "n")
     }else{
-      legend(x = 0.6, y = lim.max + 13,  
+      legend(x = 0.4, y = lim.max + 13,  
              legend = c(des.names[1]),lty=c(1),
              lwd=c(2),col=c("#2E2E2E"),
              inset = 0.05, bg="transparent", bty = "n")
@@ -792,10 +846,11 @@ cpv <- function(design.matrix, design.matrix.2 = NULL, des.names = c("Design 1",
     # Generate points on a sphere
     set.seed(1234567)
     
-    Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
-    Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
-    Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
+    Urand <- rnorm(n=(n.var*N.generated), mean = 0, sd = 1)
+    #Urand <- runif(n=(n.var*N.generated),min=-sqrt(n.var),max=sqrt(n.var))
+    #Urand <- ifelse(Urand < (-sqrt(n.var)+.001), -sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > ( sqrt(n.var)-.001),  sqrt(n.var), Urand)
+    #Urand <- ifelse(Urand > -.001 & Urand < .001,  0, Urand)
     
     rand.sphere <- matrix(Urand, byrow= TRUE, ncol=n.var)
     norm2.rand <- apply(rand.sphere, MARGIN = 1, norm2)

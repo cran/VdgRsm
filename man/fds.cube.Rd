@@ -4,7 +4,7 @@
    The Fraction of Design Space (FDS) plots for cuboidal-region designs
 }
 \description{
-  Create Fraction of Design Space plots for response surface designs in cuboidal regions.
+  Create fraction of design space plots for response surface designs in cuboidal regions.
 }
 \usage{
 fds.cube(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
@@ -19,7 +19,7 @@ fds.cube(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 }}
 
 \value{
-  \code{fds.sphere} is called to generate Fraction of Design Space plots for cuboidal-region designs.
+  \code{fds.sphere} is called to generate fraction of design space plots for cuboidal-region designs.
 }
 
 \examples{

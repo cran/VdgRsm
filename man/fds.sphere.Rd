@@ -4,11 +4,11 @@
   The Fraction of Design Space (FDS) plots for spherical-region designs
 }
 \description{
-  Create Fraction of Design Space plots for response surface designs in spherical regions.
+  Create fraction of design space plots for response surface designs in spherical regions.
 }
 \usage{
 fds.sphere(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL, 
-           des.names = c("Design 1","Design 2","Design 3"), scale = TRUE)
+           des.names = c("Design 1","Design 2","Design 3"), scale = TRUE, label = "ON")
 }
 \arguments{
 \item{design.matrix, design.matrix.2, design.matrix.3}{
@@ -19,13 +19,15 @@ fds.sphere(design.matrix, design.matrix.2 = NULL, design.matrix.3 = NULL,
 }
 \item{scale}{
    Design points are scaled by a factor equal to the square root of the number of factors divided by the maximum of radii across the set of design points. This factor makes two or more designs comparable by scaling the maximum design point radius to be the square root of the number of factors.
-}}
+}
+\item{label}{
+  The default is "ON" meaning that all legends will be appeared, and if it is "OFF", legends will be removed.}
+}
 \value{
   \code{fds.sphere} is called to generate Fraction of Design Space plots for spherical-region designs.
 }
 \examples{
-CCD1<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1)
-CCD2<- gen.CCD(n.vars = 3, n.center = 2, alpha = 1.6817)
-CCD3<- gen.CCD(n.vars = 3, n.center = 2, alpha = sqrt(3))
-fds.sphere(CCD1, CCD2, CCD3)
+CCD1<- gen.CCD(n.vars = 2, n.center = 2, alpha = 1)
+CCD2<- gen.CCD(n.vars = 2, n.center = 2, alpha = sqrt(2))
+fds.sphere(CCD1, CCD2)
 }

@@ -18,7 +18,7 @@
     }
 }
 \value{
-  \code{gen.Roquemore} will retrieve the hybrid design stored and the output is a list containing relevant Roquemore's designs given a k value. 
+  \code{gen.Roquemore} will retrieve the hybrid design points stored and the output is a list containing relevant Roquemore's designs given a k value. 
 }
 \examples{
  gen.Roquemore(3)
